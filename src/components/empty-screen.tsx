@@ -1,7 +1,10 @@
 'use client';
 
 import { Bot, Dumbbell, Zap, Flame, Heart } from 'lucide-react';
-import type { UseChatHelpers } from '@ai-sdk/react';
+
+interface EmptyScreenProps {
+    setInput: (text: string) => void;
+}
 
 const categories = [
     {
@@ -38,7 +41,7 @@ const categories = [
     },
 ];
 
-export function EmptyScreen({ setInput }: Pick<UseChatHelpers, 'setInput'>) {
+export function EmptyScreen({ setInput }: EmptyScreenProps) {
     return (
         <div className="max-w-3xl mx-auto px-6 py-12">
             {/* Bot greeting */}
