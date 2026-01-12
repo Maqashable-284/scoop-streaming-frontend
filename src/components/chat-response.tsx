@@ -4,6 +4,8 @@ import type React from "react"
 import ReactMarkdown from 'react-markdown'
 import { ScoopLogo } from "./scoop-logo"
 import { RefreshCw } from "lucide-react"
+import { ProductCard } from "./ProductCard"
+import { parseProductsFromMarkdown } from "@/lib/parseProducts"
 
 interface QuickReply {
     id: string
@@ -13,7 +15,7 @@ interface QuickReply {
 
 interface ChatResponseProps {
     userMessage?: string
-    assistantContent?: string  // NEW: Actual LLM response
+    assistantContent?: string
     quickReplies?: QuickReply[]
     onQuickReplyClick?: (id: string, text: string) => void
 }
@@ -32,6 +34,13 @@ export function ChatResponse({
     quickReplies = defaultQuickReplies,
     onQuickReplyClick,
 }: ChatResponseProps) {
+    // Parse products from markdown if content exists
+    const parsed = assistantContent
+        ? parseProductsFromMarkdown(assistantContent)
+        : { intro: '', products: [], outro: '' };
+
+    const hasProducts = parsed.products.length > 0;
+
     return (
         <div className="space-y-6">
             {/* User message */}
@@ -51,11 +60,47 @@ export function ChatResponse({
                 </div>
 
                 <div className="flex-1 space-y-4">
-                    {/* Actual LLM Response as Markdown */}
                     {assistantContent ? (
-                        <div className="prose prose-sm max-w-none text-foreground prose-headings:text-foreground prose-strong:text-foreground prose-a:text-primary hover:prose-a:underline">
-                            <ReactMarkdown>{assistantContent}</ReactMarkdown>
-                        </div>
+                        hasProducts ? (
+                            // Render with ProductCards
+                            <>
+                                {/* Intro text */}
+                                {parsed.intro && (
+                                    <div className="prose prose-sm max-w-none text-foreground">
+                                        <ReactMarkdown>{parsed.intro}</ReactMarkdown>
+                                    </div>
+                                )}
+
+                                {/* Product Cards */}
+                                <div className="products-grid">
+                                    {parsed.products.map((product, idx) => (
+                                        <ProductCard
+                                            key={idx}
+                                            rank={product.rank}
+                                            name={product.name}
+                                            brand={product.brand}
+                                            price={product.price}
+                                            servings={product.servings}
+                                            pricePerServing={product.pricePerServing}
+                                            description={product.description}
+                                            buyLink={product.buyLink}
+                                        />
+                                    ))}
+                                </div>
+
+                                {/* Outro text */}
+                                {parsed.outro && (
+                                    <div className="prose prose-sm max-w-none text-foreground mt-4">
+                                        <ReactMarkdown>{parsed.outro}</ReactMarkdown>
+                                    </div>
+                                )}
+                            </>
+                        ) : (
+                            // Fallback: render as regular markdown
+                            <div className="prose prose-sm max-w-none text-foreground prose-headings:text-foreground prose-strong:text-foreground prose-a:text-primary hover:prose-a:underline">
+                                <ReactMarkdown>{assistantContent}</ReactMarkdown>
+                            </div>
+                        )
                     ) : (
                         <p className="text-muted-foreground italic">პასუხი იტვირთება...</p>
                     )}
@@ -69,10 +114,10 @@ export function ChatResponse({
                         <button
                             key={reply.id}
                             onClick={() => onQuickReplyClick?.(reply.id, reply.text)}
-                            className="group flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-card hover:border-primary hover:bg-primary/5 transition-all duration-200 text-sm text-foreground cursor-pointer hover:shadow-sm active:scale-95"
+                            className="quick-reply-btn group flex items-center gap-2"
                         >
                             {reply.icon || <RefreshCw className="w-4 h-4" strokeWidth={1.5} />}
-                            <span className="group-hover:text-primary transition-colors">{reply.text}</span>
+                            <span>{reply.text}</span>
                         </button>
                     ))}
                 </div>

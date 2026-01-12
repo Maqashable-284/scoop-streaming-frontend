@@ -161,10 +161,23 @@ export default function Chat() {
 
     const activeConversation = conversations.find((c) => c.id === activeId);
 
-    // Auto-scroll to bottom
+    // Last user message ref for smart scrolling
+    const lastUserMessageRef = useRef<HTMLDivElement>(null);
+
+    // Auto-scroll: scroll to user's message so response starts visible
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [activeConversation?.messages, isLoading]); // Scroll on loading state change too
+        // When loading starts, scroll to end (to show loader)
+        // When response arrives, scroll to user message (to show from beginning)
+        if (isLoading) {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        } else if (lastUserMessageRef.current) {
+            // Scroll user message to top with some padding
+            lastUserMessageRef.current.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    }, [activeConversation?.messages, isLoading]);
 
     // Create new conversation - just reset to empty screen
     const startNewChat = useCallback(() => {
@@ -282,6 +295,8 @@ export default function Chat() {
 
         for (let i = 0; i < msgs.length; i++) {
             const msg = msgs[i];
+            const isLastUserMessage = msg.role === 'user' && i === msgs.length - 1 ||
+                (msg.role === 'user' && msgs[i + 1]?.role === 'assistant' && i + 1 === msgs.length - 1);
 
             if (msg.role === 'user') {
                 const nextMsg = msgs[i + 1];
@@ -289,27 +304,37 @@ export default function Chat() {
                 // 1. User followed by Assistant -> Render ChatResponse (Pair)
                 if (nextMsg && nextMsg.role === 'assistant') {
                     // Convert backend quick_replies to ChatResponse format
-                    const dynamicQuickReplies = nextMsg.quickReplies?.map((qr, idx) => ({
-                        id: `qr-${idx}`,
-                        text: qr.title,
-                        icon: null, // Backend doesn't send icons, ChatResponse will handle
-                    }));
+                    // Pass undefined if empty so ChatResponse uses defaults
+                    const qrList = nextMsg.quickReplies ?? [];
+                    const dynamicQuickReplies = qrList.length > 0
+                        ? qrList.map((qr, idx) => ({
+                            id: `qr-${idx}`,
+                            text: qr.title,
+                            icon: null,
+                        }))
+                        : undefined; // Let ChatResponse use defaults
+
+                    // Check if this is the last pair - add ref for scroll
+                    const isLastPair = i + 1 === msgs.length - 1;
 
                     items.push(
-                        <ChatResponse
-                            key={msg.id}
-                            userMessage={msg.content}
-                            assistantContent={nextMsg.content}
-                            quickReplies={dynamicQuickReplies}
-                            onQuickReplyClick={(id, text) => sendMessage(text)}
-                        />
+                        <div key={msg.id} ref={isLastPair ? lastUserMessageRef : undefined}>
+                            <ChatResponse
+                                userMessage={msg.content}
+                                assistantContent={nextMsg.content}
+                                quickReplies={dynamicQuickReplies}
+                                onQuickReplyClick={(id, text) => sendMessage(text)}
+                            />
+                        </div>
                     );
                     i++; // Skip assistant message as it's consumed by ChatResponse
                 }
                 // 2. User is last message & Loading -> Render ChatLoader
                 else if (isLoading && i === msgs.length - 1) {
                     items.push(
-                        <ChatLoader key="loader" userMessage={msg.content} />
+                        <div key="loader" ref={lastUserMessageRef}>
+                            <ChatLoader userMessage={msg.content} />
+                        </div>
                     );
                 }
                 // 3. User is last message & NOT Loading (maybe error or waiting) -> Render Bubble

@@ -1,6 +1,6 @@
 'use client';
 
-import { Bot, Dumbbell, Zap, Flame, Heart } from 'lucide-react';
+import { Bot, Dumbbell, Zap, Flame, User } from 'lucide-react';
 
 interface EmptyScreenProps {
     setInput: (text: string) => void;
@@ -9,14 +9,22 @@ interface EmptyScreenProps {
 const categories = [
     {
         id: 1,
-        title: 'კუნთის ზრდა',
-        description: 'მირჩიე პროტეინი და გეინერი',
+        title: 'კუნთის მასის ზრდა',
+        description: 'მირჩიე პროტეინი და კრეატინი',
         icon: Dumbbell,
         color: '#D9B444', // Metallic Gold
-        message: 'მინდა კუნთის მასის მომატება. რომელი პროტეინი და გეინერი მირჩევ?',
+        message: 'მინდა კუნთის მასის მომატება. რომელი პროტეინი და კრეატინი მირჩევ?',
     },
     {
         id: 2,
+        title: 'წონის კლება',
+        description: 'მირჩიე ცხიმისმწველი',
+        icon: Flame,
+        color: '#CC3348', // Brick Red
+        message: 'მინდა წონის დაკლება. რომელი ცხიმისმწველი და L-კარნიტინი მირჩევ?',
+    },
+    {
+        id: 3,
         title: 'ენერგია და ძალა',
         description: 'მირჩიე კრეატინი და Pre-workout',
         icon: Zap,
@@ -24,20 +32,12 @@ const categories = [
         message: 'მინდა ენერგიის და ძალის გაზრდა. რომელი კრეატინი და Pre-workout მირჩევ?',
     },
     {
-        id: 3,
-        title: 'წონის კლება',
-        description: 'ცხიმისმწველები და L-კარნიტინი',
-        icon: Flame,
-        color: '#CC3348', // Brick Red
-        message: 'მინდა წონის დაკლება. რომელი ცხიმისმწველი და L-კარნიტინი მირჩევ?',
-    },
-    {
         id: 4,
-        title: 'ჯანმრთელობა',
-        description: 'ვიტამინები და ომეგა-3',
-        icon: Heart,
-        color: '#0A7364', // Pine Green
-        message: 'მინდა ჯანმრთელობის გაუმჯობესება. რომელი ვიტამინები და ომეგა-3 მირჩევ?',
+        title: 'დამწყები ვარ',
+        description: 'ვარჯიშს ვიწყებ და რჩევა მჭირდება',
+        icon: User,
+        color: '#8B5CF6', // Purple
+        message: 'დამწყები ვარ, ახლა ვიწყებ ვარჯიშს. რა დანამატები მჭირდება დასაწყებად?',
     },
 ];
 
@@ -50,7 +50,7 @@ export function EmptyScreen({ setInput }: EmptyScreenProps) {
                     <Bot className="w-7 h-7 text-foreground" strokeWidth={1.5} />
                 </div>
                 <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-                    რით შემიძლია დაგეხმაროთ დღეს?
+                    რა არის შენი მიზანი?
                 </h1>
             </div>
 
