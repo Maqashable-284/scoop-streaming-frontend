@@ -3,7 +3,7 @@
 import type React from "react"
 import ReactMarkdown from 'react-markdown'
 import { ScoopLogo } from "./scoop-logo"
-import { RefreshCw } from "lucide-react"
+import { RefreshCw, Lightbulb } from "lucide-react"
 import { ProductCard } from "./ProductCard"
 import { parseProductsFromMarkdown } from "@/lib/parseProducts"
 
@@ -94,12 +94,39 @@ export function ChatResponse({
                                         <ReactMarkdown>{parsed.outro}</ReactMarkdown>
                                     </div>
                                 )}
+
+                                {/* Practical Tip */}
+                                {parsed.tip && (
+                                    <div className="mt-4 p-4 rounded-xl" style={{ backgroundColor: 'rgba(10, 115, 100, 0.08)' }}>
+                                        <div className="flex items-start gap-3">
+                                            <Lightbulb className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#0A7364' }} strokeWidth={1.5} />
+                                            <div>
+                                                <p className="font-semibold text-sm mb-1" style={{ color: '#0A7364' }}>პრაქტიკული რჩევა</p>
+                                                <p className="text-sm" style={{ color: '#065451' }}>{parsed.tip}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </>
                         ) : (
-                            // Fallback: render as regular markdown
-                            <div className="prose prose-sm max-w-none text-foreground prose-headings:text-foreground prose-strong:text-foreground prose-a:text-primary hover:prose-a:underline">
-                                <ReactMarkdown>{assistantContent}</ReactMarkdown>
-                            </div>
+                            // Fallback: render cleaned markdown (TIP already extracted)
+                            <>
+                                <div className="prose prose-sm max-w-none text-foreground prose-headings:text-foreground prose-strong:text-foreground prose-a:text-primary hover:prose-a:underline">
+                                    <ReactMarkdown>{parsed.intro || assistantContent}</ReactMarkdown>
+                                </div>
+                                {/* Practical Tip for non-product responses */}
+                                {parsed.tip && (
+                                    <div className="mt-4 p-4 rounded-xl" style={{ backgroundColor: 'rgba(10, 115, 100, 0.08)' }}>
+                                        <div className="flex items-start gap-3">
+                                            <Lightbulb className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#0A7364' }} strokeWidth={1.5} />
+                                            <div>
+                                                <p className="font-semibold text-sm mb-1" style={{ color: '#0A7364' }}>პრაქტიკული რჩევა</p>
+                                                <p className="text-sm" style={{ color: '#065451' }}>{parsed.tip}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </>
                         )
                     ) : (
                         <p className="text-muted-foreground italic">პასუხი იტვირთება...</p>

@@ -22,6 +22,7 @@ export interface ParsedResponse {
     intro: string;
     products: ParsedProduct[];
     outro: string;
+    tip?: string; // Practical tip extracted from [TIP]...[/TIP]
 }
 
 /**
@@ -101,6 +102,15 @@ function consolidateProducts(products: ParsedProduct[]): ParsedProduct[] {
  * [ყიდვა →](link)
  */
 export function parseProductsFromMarkdown(markdown: string): ParsedResponse {
+    // Extract and remove TIP section first (before any other parsing)
+    let tip: string | undefined;
+    const tipPattern = /\[TIP\]([\s\S]*?)\[\/TIP\]/;
+    const tipMatch = markdown.match(tipPattern);
+    if (tipMatch) {
+        tip = tipMatch[1].trim();
+        markdown = markdown.replace(tipPattern, '').trim();
+    }
+
     const lines = markdown.split('\n');
     const rawProducts: ParsedProduct[] = [];
     let intro = '';
@@ -198,8 +208,14 @@ export function parseProductsFromMarkdown(markdown: string): ParsedResponse {
             intro += (intro ? '\n' : '') + line;
         } else if (!currentProduct && lastProductEndLine > 0 && i > lastProductEndLine) {
             // Collect outro (after last product)
+            // Skip: links, lists, short lines (likely leftover headings like "კრეატინი")
             if (!line.startsWith('[') && !line.startsWith('-')) {
-                outro += (outro ? '\n' : '') + line;
+                // Skip very short lines or single words (likely section headers/leftovers)
+                const isShortLine = line.length < 15;
+                const isSingleWord = !line.includes(' ');
+                if (!isShortLine && !isSingleWord) {
+                    outro += (outro ? '\n' : '') + line;
+                }
             }
         }
     }
@@ -234,6 +250,6 @@ export function parseProductsFromMarkdown(markdown: string): ParsedResponse {
     // Consolidate duplicates (same product, different flavors)
     const products = consolidateProducts(validProducts);
 
-    return { intro, products, outro };
+    return { intro, products, outro, tip };
 }
 
