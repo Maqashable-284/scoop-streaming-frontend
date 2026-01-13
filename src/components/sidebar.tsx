@@ -1,44 +1,174 @@
 'use client';
 
-import { Sparkles, MessageSquare, Info, X, Trash2, MessageCircle, Droplet, Zap, Leaf, AlertCircle, Apple, TrendingDown, TrendingUp, Dumbbell } from 'lucide-react';
+import {
+    Sparkles,
+    MessageSquare,
+    Info,
+    X,
+    Trash2,
+    MessageCircle,
+    Droplet,
+    Zap,
+    Leaf,
+    AlertCircle,
+    Apple,
+    TrendingDown,
+    TrendingUp,
+    Dumbbell,
+    Tag,
+    Moon,
+    ShoppingBag,
+    Flame,
+    Heart,
+    HelpCircle,
+    Settings
+} from 'lucide-react';
 import { groupConversationsByDate } from '../lib/groupConversations';
 import { LucideIcon } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
 
-// Theme icon mapping
+// 1. თემატური აიკონები (პრიორიტეტის მიხედვით)
 const THEME_ICONS: Record<string, LucideIcon> = {
-    protein: Droplet,
-    creatine: Zap,
-    vitamins: Leaf,
-    allergy: AlertCircle,
-    diet: Apple,
-    weight_loss: TrendingDown,
-    muscle: TrendingUp,
-    workout: Dumbbell,
+    promos: Tag,            // აქციები (ყველაზე პრიორიტეტული)
+    sleep: Moon,            // ძილი
+    dietary: Leaf,          // "გარეშე", ვეგანური
+    weight_loss: Flame,     // ცხიმისმწველები
+    energy: Zap,            // ენერგია, პრე-ვორკაუტი, პამპი
+    recovery: Droplet,      // აღდგენა, ამინოები
+    health: Heart,          // ჯანმრთელობა, ვიტამინები, სექსუალური
+    accessories: ShoppingBag, // აქსესუარები
+    muscle: Dumbbell,       // პროტეინი, გეინერი, კრეატინი (Default სპორტული)
+    learning: HelpCircle,   // კითხვები
+    default: MessageCircle
 };
 
-// Keywords for each theme
+// 2. სრული ქივორდების სია (მენიუს მიხედვით)
 const KEYWORDS: Record<string, string[]> = {
-    protein: ['პროტეინ', 'protein', 'ცილ', 'whey'],
-    creatine: ['კრეატინ', 'creatine'],
-    vitamins: ['ვიტამინ', 'vitamin'],
-    allergy: ['ალერგი', 'allergy', 'აუტანლობ'],
-    diet: ['დიეტ', 'diet', 'კვებ', 'nutrition'],
-    weight_loss: ['წონ', 'weight', 'დაკლებ', 'loss'],
-    muscle: ['კუნთ', 'muscle', 'მასა', 'mass', 'gain'],
-    workout: ['ვარჯიშ', 'workout', 'ტრენ', 'train'],
+    // --- 1. აქციები და ბანდლები (TOP PRIORITY) ---
+    promos: [
+        'aqcia', 'akcia', 'აქცია',
+        'fasdakleba', 'sale', 'ფასდაკლება',
+        '2 ertis', '2 1-is', '2 1', 'ori ertis', 'ორი ერთის',
+        '3 oris', '3 1-is', 'sami oris', 'სამი ორის',
+        'upaso', 'ufaso', 'gift', 'shachuqari', 'უფასო', 'საჩუქარი',
+        'bundle', 'bandli', 'komplekti', 'ბანდლი', 'კომპლექტი',
+        'dazoge', 'save', 'დაზოგე'
+    ],
+
+    // --- 2. სპეციფიკური დიეტური ("გარეშე") ---
+    dietary: [
+        'gareshe', 'free', 'გარეშე', // გლუტენის გარეშე, შაქრის გარეშე
+        'gluten', 'gluteni', 'გლუტენი',
+        'sugar', 'shaqari', 'შაქარი',
+        'lactose', 'laqtoza', 'ლაქტოზა',
+        'vegan', 'mcenareuli', 'plant', 'ვეგან', 'მცენარეული',
+        'soy', 'soio', 'სოიო',
+        'txili', 'nuts', 'თხილი'
+    ],
+
+    // --- 3. ძილი და რელაქსაცია ---
+    sleep: [
+        'sleep', 'dzili', 'udziloba', 'ძილი', 'უძილობა',
+        'melatonin', 'melatonini', 'მელატონინი',
+        'zma', 'relaxation', 'ragulacia', 'რეგულაცია' // ძილის რეგულაცია
+    ],
+
+    // --- 4. წონის კლება (ცხიმისმწველები) ---
+    weight_loss: [
+        'weight loss', 'kleba', 'dakleba', 'wona', 'წონა', 'კლება', 'დაკლება',
+        'fat', 'burner', 'cximi', 'cximismcweli', 'ცხიმი', 'ცხიმისმწველი',
+        'carnitine', 'karnitini', 'კარნიტინი',
+        'cla', 'thermogenic', 'termogenuli', 'თერმოგენული',
+        'gamoshroba', 'shred', 'dry', 'გამოშრობა'
+    ],
+
+    // --- 5. ენერგია და პრე-ვორკაუტი ---
+    energy: [
+        'energy', 'energia', 'energiis', 'ენერგია', 'ენერგიის',
+        'pre-workout', 'preworkout', 'varchishamde', 'ვარჯიშამდე',
+        'pump', 'pampi', 'fampi', 'პამპი', 'ფამპი',
+        'carbs', 'naxshirwylebi', 'ნახშირწყლები',
+        'stimulant', 'stimulatori', 'სტიმულატორი'
+    ],
+
+    // --- 6. აღდგენა და ამინოები ---
+    recovery: [
+        'recovery', 'agdgena', 'varchishis shemdeg', 'აღდგენა', 'ვარჯიშის შემდეგ',
+        'amino', 'aminomzhavebi', 'ამინო', 'ამინომჟავები',
+        'bcaa',
+        'glutamine', 'glutamini', 'გლუტამინი',
+        'arginine', 'arginini', 'არგინინი',
+        'citrulline', 'citrulini', 'ციტრულინი'
+    ],
+
+    // --- 7. ჯანმრთელობა (გული, სახსრები, სექსუალური, ვიტამინები) ---
+    health: [
+        'health', 'jamrteloba', 'janmrteloba', 'ჯანმრთელობა',
+        'heart', 'guli', 'გული',
+        'sexual', 'seqsualuri', 'potencia', 'სექსუალური', 'პოტენცია',
+        'joints', 'saxsrebi', 'სახსრები',
+        'glucosamine', 'glukozamini', 'გლუკოზამინი',
+        'chondroitin', 'qondroitini', 'ქონდროიტინი',
+        'vitamin', 'vitaminebi', 'ვიტამინები',
+        'mineral', 'mineralebi', 'მინერალები',
+        'multi', 'multivitamini', 'მულტივიტამინი'
+    ],
+
+    // --- 8. აქსესუარები ---
+    accessories: [
+        'accessory', 'aqsesuari', 'aqsesuarebi', 'აქსესუარები',
+        'shaker', 'sheikeri', 'შეიკერი',
+        'bottle', 'botli', 'flask', 'ბოთლი', 'ფლასკი',
+        'glove', 'xeltatmani', 'ხელთათმანი',
+        'belt', 'gvedi', 'damcheri', 'ღვედი', 'დამჭერი',
+        'mat', 'xalicha', 'ხალიჩა',
+        'band', 'lenti', 'rezini', 'ლენტი', 'რეზინი'
+    ],
+
+    // --- 9. კუნთი / ძალა / პროტეინი (Default სპორტული კატეგორია) ---
+    muscle: [
+        'muscle', 'kunti', 'masa', 'masis', 'კუნთი', 'მასა', 'მასის',
+        'strength', 'dzala', 'dzalis', 'ძალა', 'ძალის',
+        'protein', 'proteini', 'პროტეინი',
+        'whey', 'vei', 'ვეი',
+        'isolate', 'izolat', 'იზოლატი',
+        'concentrate', 'koncentrati', 'კონცენტრატი',
+        'casein', 'kazeini', 'კაზეინი',
+        'beef', 'sakonlis', 'საქონლის',
+        'gainer', 'geineri', 'გეინერი',
+        'creatine', 'kreatini', 'კრეატინი',
+        'monohydrate', 'monohidrati', 'მონოჰიდრატი',
+        'anabolic', 'anabolikebi', 'ანაბოლიკები'
+    ],
+
+    // კითხვები / დამწყები
+    learning: [
+        'help', 'daxmareba', 'დახმარება',
+        'rcheva', 'mirchie', 'რჩევა', 'მირჩიე',
+        'damcyebi', 'newbie', 'დამწყები',
+        'rogor', 'როგორ',
+        'ra aris', 'რა არის'
+    ]
 };
 
-// Get appropriate icon based on conversation title
+// Get appropriate icon based on conversation title (priority order matters)
 function getConversationIcon(title: string): LucideIcon {
     const lowerTitle = title.toLowerCase();
 
-    for (const [theme, keywords] of Object.entries(KEYWORDS)) {
-        if (keywords.some(kw => lowerTitle.includes(kw))) {
+    // Check keywords in priority order (as defined in THEME_ICONS object)
+    const themeOrder = [
+        'promos', 'sleep', 'dietary', 'weight_loss', 'energy',
+        'recovery', 'health', 'accessories', 'muscle', 'learning'
+    ];
+
+    for (const theme of themeOrder) {
+        const keywords = KEYWORDS[theme];
+        if (keywords && keywords.some(kw => lowerTitle.includes(kw.toLowerCase()))) {
             return THEME_ICONS[theme];
         }
     }
 
-    return MessageCircle; // default
+    return THEME_ICONS.default; // default
 }
 
 // Format time as "16:23" (24-hour format, Tbilisi UTC+4)
@@ -84,8 +214,33 @@ export function Sidebar({
     onDeleteData,
     isOpen,
 }: SidebarProps) {
+    // Settings popover state
+    const [showSettingsMenu, setShowSettingsMenu] = useState(false);
+    const settingsMenuRef = useRef<HTMLDivElement>(null);
+    const settingsButtonRef = useRef<HTMLButtonElement>(null);
+
     // Group conversations by date
     const grouped = groupConversationsByDate(conversations);
+
+    // Click outside to close settings popover
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                showSettingsMenu &&
+                settingsMenuRef.current &&
+                settingsButtonRef.current &&
+                !settingsMenuRef.current.contains(event.target as Node) &&
+                !settingsButtonRef.current.contains(event.target as Node)
+            ) {
+                setShowSettingsMenu(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [showSettingsMenu]);
 
     const renderConversationGroup = (title: string, convs: ConversationItem[]) => {
         if (convs.length === 0) return null;
@@ -193,19 +348,46 @@ export function Sidebar({
                         )}
                     </div>
 
-                    {/* About assistant */}
-                    <div className="p-4 border-t border-sidebar-border space-y-1">
-                        <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors w-full px-3 py-2 rounded-md hover:bg-sidebar-accent">
-                            <Info className="w-4 h-4" strokeWidth={1.5} />
-                            <span>ასისტენტის შესახებ</span>
-                        </button>
+                    {/* Settings footer with popover */}
+                    <div className="p-4 border-t border-sidebar-border relative">
                         <button
-                            onClick={onDeleteData}
-                            className="flex items-center gap-2 text-sm text-red-500 hover:text-red-600 transition-colors w-full px-3 py-2 rounded-md hover:bg-red-50"
+                            ref={settingsButtonRef}
+                            onClick={() => setShowSettingsMenu(!showSettingsMenu)}
+                            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors w-full px-3 py-2 rounded-md hover:bg-sidebar-accent"
                         >
-                            <Trash2 className="w-4 h-4" strokeWidth={1.5} />
-                            <span>წაშალე მონაცემები</span>
+                            <Settings className="w-4 h-4" strokeWidth={1.5} />
+                            <span>პარამეტრები</span>
                         </button>
+
+                        {/* Settings Popover */}
+                        {showSettingsMenu && (
+                            <div
+                                ref={settingsMenuRef}
+                                className="absolute bottom-full left-4 right-4 mb-2 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200"
+                            >
+                                <button
+                                    className="flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors w-full px-4 py-2.5"
+                                    onClick={() => {
+                                        setShowSettingsMenu(false);
+                                        // Placeholder for About Assistant action
+                                        console.log('About Assistant clicked');
+                                    }}
+                                >
+                                    <Info className="w-4 h-4" strokeWidth={1.5} />
+                                    <span>ასისტენტის შესახებ</span>
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setShowSettingsMenu(false);
+                                        onDeleteData();
+                                    }}
+                                    className="flex items-center gap-2 text-sm text-red-500 hover:bg-red-50 transition-colors w-full px-4 py-2.5"
+                                >
+                                    <Trash2 className="w-4 h-4" strokeWidth={1.5} />
+                                    <span>წაშალე მონაცემები</span>
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

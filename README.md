@@ -131,6 +131,14 @@ const data = await response.json();
 
 ## 📊 Recent Updates
 
+### v2.2.1 (2026-01-13) - Data Deletion Fix
+- 🔧 **Page Reload After Deletion**: Ensures complete cleanup of frontend state
+  - Clears React component state
+  - Clears backend Gemini session cache  
+  - Clears localStorage (user_id, consent)
+  - Generates new user_id for next session
+- ✅ **Verified**: Works in conjunction with backend v1.2.1 ContextVar fix
+
 ### v2.2.0 (2026-01-13) - Sidebar UI/UX Enhancements
 - 🎨 **Thematic Icons**: Dynamic icon selection based on conversation topic (8 categories)
 - 📅 **Date Grouping**: Conversations grouped by "Today", "Yesterday", "Previous 7 Days"

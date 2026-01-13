@@ -1,6 +1,7 @@
 'use client';
 
 import { Bot, Dumbbell, Zap, Flame, User } from 'lucide-react';
+import { ScoopLogo } from './scoop-logo';
 
 interface EmptyScreenProps {
     setInput: (text: string) => void;
@@ -43,18 +44,17 @@ const categories = [
 
 export function EmptyScreen({ setInput }: EmptyScreenProps) {
     return (
-        <div className="max-w-3xl mx-auto px-6 py-12">
-            {/* Bot greeting */}
-            <div className="flex items-center gap-4 mb-10">
-                <div className="w-14 h-14 rounded-xl border border-[#E5E7EB] flex items-center justify-center bg-card">
-                    <Bot className="w-7 h-7 text-foreground" strokeWidth={1.5} />
+        <div className="max-w-4xl mx-auto px-6 py-12">
+            <div className="text-center mb-12">
+                <div className="flex items-center justify-center gap-3 mb-3">
+                    <ScoopLogo className="w-10 h-10" />
+                    <h1 className="text-3xl font-bold text-primary">Scoop AI ასისტენტი</h1>
                 </div>
-                <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+                <p className="text-lg text-muted-foreground">
                     რა არის შენი მიზანი?
-                </h1>
+                </p>
             </div>
 
-            {/* Category cards - Clean lab style with precise borders */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {categories.map((category) => (
                     <button

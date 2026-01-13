@@ -125,19 +125,15 @@ export default function Chat() {
                 localStorage.removeItem('scoop_user_id');
                 localStorage.removeItem('scoop_history_consent');
 
-                // Reset state
-                setConversations([]);
-                setActiveId(null);
-                setSessionsLoaded(false);
-                setShowDeleteConfirm(false);
-
-                // Generate new userId
+                // Generate new userId for next session
                 const newId = `widget_${Math.random().toString(36).substring(2, 15)}`;
                 localStorage.setItem('scoop_user_id', newId);
-                setUserId(newId);
 
-                // Show consent modal again
-                setShowConsentModal(true);
+                // Force full page reload to clear:
+                // 1. Frontend React state
+                // 2. Backend Gemini session cache (function call history)
+                // 3. Any in-memory user profile data
+                window.location.reload();
             }
         } catch (error) {
             console.error('[Scoop] Failed to delete data:', error);
@@ -240,6 +236,8 @@ export default function Chat() {
             id: newId,
             title: 'ახალი საუბარი',
             messages: [],
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
         };
         setConversations((prev) => [newConv, ...prev]);
         setActiveId(newId);
@@ -418,7 +416,7 @@ export default function Chat() {
         }
 
         return (
-            <div className="max-w-3xl mx-auto px-6 py-6 space-y-8">
+            <div className="max-w-4xl mx-auto px-6 py-6 space-y-8">
                 {items}
                 <div ref={messagesEndRef} />
             </div>
@@ -541,7 +539,7 @@ export default function Chat() {
 
                 {/* Input area */}
                 <div className="">
-                    <div className="max-w-3xl mx-auto px-6 py-4">
+                    <div className="max-w-4xl mx-auto px-6 py-4">
                         <form onSubmit={handleSubmit} className="flex items-center gap-3">
                             <input
                                 type="text"
