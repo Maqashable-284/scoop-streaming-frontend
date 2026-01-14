@@ -440,21 +440,19 @@ body {
 
 .quick-reply-btn {
   padding: 10px 16px;
-  background: var(--bg-white);
-  border: 1px solid var(--border-color);
+  background: transparent;
+  border: none;
   border-radius: 20px;
   font-family: var(--font-main);
   font-size: 13px;
   font-weight: var(--weight-medium);
-  color: var(--text-black);
+  color: var(--scoop-pine-green);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .quick-reply-btn:hover {
-  border-color: var(--scoop-pine-green);
-  background: rgba(10, 115, 100, 0.05);
-  color: var(--scoop-pine-green);
+  background: rgba(10, 115, 100, 0.08);
 }
 
 /* Input Area */

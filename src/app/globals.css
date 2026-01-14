@@ -306,22 +306,23 @@
 
 .quick-reply-btn {
   padding: 8px 16px;
-  background: rgba(217, 180, 68, 0.12);
-  /* Subtle gold background */
-  border: none;
+  background: transparent;
+  border: 1px solid #D1D5DB;
   border-radius: 100px;
-  color: #A67C00;
-  /* Darker gold for text */
+  color: #0A7364;
+  /* Pine Green text and icon */
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .quick-reply-btn:hover {
-  background: rgba(217, 180, 68, 0.22);
-  /* Slightly more visible on hover */
+  background: rgba(10, 115, 100, 0.08);
+  border-color: #0A7364;
+  /* Light Pine Green background on hover */
 }
+
 
 /* Products Grid */
 .products-grid {

@@ -136,7 +136,7 @@ export function ChatResponse({
 
             {/* Quick reply buttons */}
             {quickReplies && quickReplies.length > 0 && (
-                <div className="flex flex-wrap gap-2 pt-4">
+                <div className="flex flex-wrap gap-2 pt-4 ml-14">
                     {quickReplies.map((reply) => (
                         <button
                             key={reply.id}

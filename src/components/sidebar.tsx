@@ -1,7 +1,7 @@
 'use client';
 
 import {
-    Sparkles,
+    Plus,
     MessageSquare,
     Info,
     X,
@@ -260,7 +260,7 @@ export function Sidebar({
                             <button
                                 key={conv.id}
                                 onClick={() => onSelect(conv.id)}
-                                className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all flex items-center gap-3 group relative ${isActive
+                                className={`w-full min-w-0 text-left px-3 py-2.5 rounded-lg text-sm transition-all flex items-center gap-3 group relative overflow-hidden ${isActive
                                     ? 'bg-green-50 text-foreground font-medium shadow-sm'
                                     : 'text-muted-foreground hover:bg-sidebar-accent hover:text-foreground'
                                     }`}
@@ -303,20 +303,23 @@ export function Sidebar({
 
             <div
                 className={`
-                fixed inset-y-0 left-0 z-50 w-72 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0
+                fixed inset-y-0 left-0 z-50 flex-shrink-0 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0
                 ${isOpen ? 'translate-x-0' : '-translate-x-full'}
             `}
+                style={{ width: '288px', minWidth: '288px', maxWidth: '288px' }}
             >
-                <div className="h-full flex flex-col bg-sidebar border-r border-sidebar-border">
+                <div className="h-full flex flex-col bg-sidebar border-r border-sidebar-border overflow-hidden">
                     {/* New conversation button */}
                     <div className="p-4">
                         <button
                             onClick={onNewChat}
-                            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-lg font-semibold hover:opacity-90 transition-opacity text-white"
-                            style={{ backgroundColor: '#0A7364' }}
+                            aria-label="ახალი საუბრის დაწყება"
+                            tabIndex={0}
+                            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-semibold transition-all duration-150 ease-in-out border-2 border-[#0A7364] bg-white text-[#0A7364] hover:bg-[#0A7364] hover:text-white active:scale-[0.98] active:bg-[#085C50] focus:outline-none focus:ring-2 focus:ring-[#0A7364] focus:ring-offset-2"
+                            style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}
                         >
-                            <Sparkles className="w-4 h-4" style={{ color: '#D9B444' }} />
-                            <span>ახალი საუბარი</span>
+                            <Plus className="w-5 h-5" strokeWidth={2.5} />
+                            <span className="text-sm">ახალი საუბარი</span>
                         </button>
                     </div>
 
@@ -329,7 +332,7 @@ export function Sidebar({
                     </button>
 
                     {/* Recent conversations */}
-                    <div className="flex-1 px-4 overflow-y-auto">
+                    <div className="flex-1 px-4 overflow-y-auto" style={{ scrollbarGutter: 'stable' }}>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4 font-medium">
                             <MessageSquare className="w-4 h-4" strokeWidth={1.5} />
                             <span>ბოლო საუბრები</span>
