@@ -1,73 +1,31 @@
-# Scoop AI Next.js Frontend 🍨
+# Scoop AI - Next.js Frontend (Fresh UI v2.0)
 
-**ქართული სპორტული კვების AI ჩატბოტის веб-ინტერფეისი**
+Modern chat interface for Scoop.ge AI nutritionist with redesigned UI components.
 
-[![Next.js 15](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)](https://www.typescriptlang.org/)
-[![Cloud Run](https://img.shields.io/badge/Google-Cloud%20Run-blue.svg)](https://cloud.google.com/run)
+## 🎨 UI Redesign Highlights (Jan 2026)
 
----
+### Amber TIP Boxes
+- Changed from Pine Green to warm Amber color scheme
+- Variables: `--tip-bg: #FEF3C7`, `--tip-border: #FBB034`
+- Lightbulb icon with enhanced visibility
 
-## 🎯 რა არის?
+### Horizontal Product Cards
+- New horizontal layout (replaced vertical cards)
+- **Pine Green metadata** (`#0A7364`) for servings/pricing
+- **scoop.ge source pills** with external link icons
+- Hover effects on product rows
 
-Next.js 15-ზე დაფუძნებული веб-ინტერფეისი **Scoop AI Agent**-ისთვის. სრული ფუნქციონალით:
-- 💬 Chat interface ქართულ ენაზე
-- 📱 Responsive design
-- 🎨 Scoop Lab brand design
-- ⚡ Real-time API integration
-- 🤖 **Dynamic LLM Responses** with Markdown rendering
+### Category Cards with Icons
+- Icon-based category starters (Dumbbell, Zap, Flame, Heart)
+- Color-coded categories (Gold, Pine Green, Red)
+- Pine Green hover effects
 
----
+### Input Styling
+- Pine Green focus ring
+- Rounded corners
+- Updated send button
 
-## ✨ ფუნქციონალი (v2.0)
-
-| Feature | აღწერა |
-|---------|--------|
-| **Chat Interface** | მესიჯების გაცვლა AI ასისტენტთან |
-| **Perplexity-Style Loader** | ანიმაციური skeleton loader ("ვამოწმებ ხელმისაწვდომობას...") |
-| **Dynamic Quick Replies** | LLM-ის მიერ გენერირებული follow-up კითხვები |
-| **Markdown Rendering** | სრული markdown support პასუხებში |
-| **Conversation History** | Sidebar საუბრების ისტორიით (list-based rendering) |
-| **Scoop Lab Design** | Pine Green, sterile white, medical look |
-| **Hover Effects** | Interactive buttons with Pine Green hover state |
-
----
-
-## 🎨 Design - Scoop Lab Brand
-
-| Element | Style |
-|---------|-------|
-| **Primary Color** | Pine Green `#0A7364` |
-| **Background** | Sterile White `#FFFFFF` |
-| **Accent** | Metallic Gold `#D9B444` |
-| **User Messages** | Pine Green background, modern corners |
-| **Bot Messages** | White card with light border |
-| **Buttons** | Hover: Pine Green border + tint |
-
----
-
-## 📁 კომპონენტები
-
-| Component | აღწერა |
-|-----------|--------|
-| `Chat.tsx` | მთავარი chat component - state management, API calls, smart scroll |
-| `sidebar.tsx` | Sidebar component - conversation history, date grouping, thematic icons |
-| `chat-response.tsx` | LLM პასუხების ჩვენება markdown-ად + quick replies |
-| `chat-loader.tsx` | Perplexity-style skeleton loader ანიმაციებით |
-| `empty-screen.tsx` | საწყისი ეკრანი მიზნების არჩევით (კუნთი, წონა, ენერგია, დამწყები) |
-| `ProductCard.tsx` | პროდუქტის ბარათი ფასით, ბრენდით და flavor-ებით |
-| `scoop-logo.tsx` | Scoop AI SVG ლოგო კომპონენტი |
-
-### 📦 Utilities
-
-| Utility | აღწერა |
-|---------|--------|
-| `lib/parseProducts.ts` | Markdown-დან პროდუქტების ამოღება და deduplication |
-| `lib/groupConversations.ts` | Conversation date grouping utility (Today, Yesterday, Previous 7 Days) |
-
----
-
-## 🚀 Development
+## 🚀 Quick Start
 
 ```bash
 # Install dependencies
@@ -75,98 +33,100 @@ npm install
 
 # Run development server
 npm run dev
+
+# Open browser
+http://localhost:3000
 ```
 
-გახსენით http://localhost:3000
+## 🔧 Environment Variables
 
----
+Create `.env.local`:
 
-## 📦 Build & Deploy
-
-### Local Build
-```bash
-npm run build
-npm start
+```env
+NEXT_PUBLIC_BACKEND_URL=http://localhost:8080
 ```
 
-### Docker (Cloud Run)
-```bash
-docker build -t scoop-vercel .
-docker run -p 8080:8080 scoop-vercel
+## 📦 Tech Stack
+
+- **Framework:** Next.js 16.1.1 with Turbopack
+- **Styling:** Tailwind CSS
+- **Icons:** Lucide React
+- **Markdown:** react-markdown
+
+## 🎯 Key Features
+
+- ✅ Real-time chat with Scoop AI backend
+- ✅ Product card rendering with parseProducts.ts
+- ✅ TIP box with contextual advice
+- ✅ Quick replies for conversation flow
+- ✅ Category-based conversation starters
+- ✅ Responsive design (mobile/tablet/desktop)
+- ✅ Privacy controls (GDPR compliant)
+- ✅ Conversation history sidebar
+
+## 📁 Project Structure
+
+```
+src/
+├── app/
+│   ├── globals.css          # Amber TIP colors, Pine Green variables
+│   └── layout.tsx
+├── components/
+│   ├── Chat.tsx              # Main chat component, input field
+│   ├── chat-response.tsx     # TIP boxes (Amber)
+│   ├── ProductCard.tsx       # Horizontal layout (Pine Green metadata)
+│   ├── empty-screen.tsx      # Category cards with icons
+│   └── sidebar.tsx           # Conversation history
+└── lib/
+    └── parseProducts.ts      # Product markdown parser
 ```
 
-### Cloud Run Auto-Deploy
-GitHub push → ავტომატური Cloud Run deploy
+## 🎨 Design System
 
+### Colors
+- **Primary:** Pine Green `#0A7364`
+- **TIP Background:** Amber `#FEF3C7`
+- **TIP Border:** Amber `#FBB034`
+- **Metadata:** Pine Green `#0A7364`
+- **Category Gold:** `#D9B444`
+- **Category Red:** `#CC3348`
+
+### Product Format (from Backend)
+```markdown
+**რეკომენდებული**
+**Product Name**
+*Brand*
+**Price ₾** · Servings პორცია · Price/Serving ₾/პორცია
+Description
+[ყიდვა →](url)
 ---
-
-## 🔧 Configuration
-
-### Environment Variables
-
-| Variable | Default |
-|----------|---------|
-| `NEXT_PUBLIC_BACKEND_URL` | `https://scoop-ai-sdk-xxx.run.app` |
-
-### Backend Integration
-
-Widget იყენებს `/chat` endpoint-ს და იღებს dynamic quick_replies:
-
-```typescript
-const response = await fetch(`${BACKEND_URL}/chat`, {
-    method: 'POST',
-    body: JSON.stringify({
-        user_id: `widget_${convId}`,
-        message: text,
-        conversation_id: convId,
-    }),
-});
-
-const data = await response.json();
-// data.response_text_geo - LLM response (markdown)
-// data.quick_replies - Dynamic follow-up buttons
 ```
-
----
-
-## 📊 Recent Updates
-
-### v2.2.1 (2026-01-13) - Data Deletion Fix
-- 🔧 **Page Reload After Deletion**: Ensures complete cleanup of frontend state
-  - Clears React component state
-  - Clears backend Gemini session cache  
-  - Clears localStorage (user_id, consent)
-  - Generates new user_id for next session
-- ✅ **Verified**: Works in conjunction with backend v1.2.1 ContextVar fix
-
-### v2.2.0 (2026-01-13) - Sidebar UI/UX Enhancements
-- 🎨 **Thematic Icons**: Dynamic icon selection based on conversation topic (8 categories)
-- 📅 **Date Grouping**: Conversations grouped by "Today", "Yesterday", "Previous 7 Days"
-- ⏰ **24-Hour Time Format**: Timestamps in HH:MM format (Tbilisi UTC+4)
-- 🎯 **Active State**: Pine Green border and background for selected conversation
-- 🔧 **Component Refactoring**: Sidebar extracted to `src/components/sidebar.tsx`
-- 🌍 **Timezone Fix**: Proper UTC to Tbilisi (Asia/Tbilisi) conversion
-
-### v2.1.0 (2026-01-13)
-- 🔧 **Layout Fix**: Skeleton loader during history load (prevents container shrinking)
-- 🔒 **Privacy Controls**: Consent modal + delete data button
-- 📜 **History Retrieval**: Load conversation history from sidebar
-- 🎨 **UX**: Smoother transitions between conversations
-
-### v2.0.0 (2026-01-12)
-- 🎨 **Perplexity-Style Loader**: Animated skeleton loader
-- 💬 **Dynamic Quick Replies**: LLM-generated follow-up questions
-- 📝 **Markdown Rendering**: Full markdown support in responses
-
----
 
 ## 🔗 Related Repositories
 
-- [scoop-genai-project](https://github.com/Maqashable-284/scoop-genai-project) - Python Backend (Gemini SDK)
-- [scoop-chainlit](https://github.com/Maqashable-284/scoop-chainlit) - Chainlit Web UI
+- **Backend:** [scoop-generative-ai-sdk-28-04](https://github.com/Maqashable-284/scoop-generative-ai-sdk-28-04)
+- **Old Frontend:** [scoop-vercel](https://github.com/Maqashable-284/scoop-vercel)
 
----
+## 📝 Changelog
+
+### v2.0.0 (Jan 14, 2026)
+- ✨ Redesigned TIP boxes (Pine Green → Amber)
+- ✨ Horizontal ProductCard layout
+- ✨ Pine Green metadata in product cards
+- ✨ Category cards with Lucide icons
+- ✨ Pine Green input focus ring
+- 🔧 Added scoop.ge source pills to products
+
+### v1.x
+- Initial Next.js implementation
+- Sidebar with conversation history
+- Privacy controls (GDPR)
+- Product card rendering
+
+## 🤝 Contributing
+
+Design from `workout-options.zip` specifications.
 
 ## 📄 License
 
-MIT
+Proprietary - Scoop.ge

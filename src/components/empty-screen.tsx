@@ -1,6 +1,6 @@
 'use client';
 
-import { Bot, Dumbbell, Zap, Flame, User } from 'lucide-react';
+import { Dumbbell, Zap, Flame, Heart } from 'lucide-react';
 import { ScoopLogo } from './scoop-logo';
 
 interface EmptyScreenProps {
@@ -10,35 +10,35 @@ interface EmptyScreenProps {
 const categories = [
     {
         id: 1,
-        title: 'კუნთის მასის ზრდა',
-        description: 'მირჩიე პროტეინი და კრეატინი',
+        title: 'კუნთის ზრდა',
+        description: 'პროტეინი და გეინერი',
         icon: Dumbbell,
         color: '#D9B444', // Metallic Gold
-        message: 'მინდა კუნთის მასის მომატება. რომელი პროტეინი და კრეატინი მირჩევ?',
+        message: 'მინდა კუნთის მასის მომატება. რა პროდუქტები მჭირდება?',
     },
     {
         id: 2,
-        title: 'წონის კლება',
-        description: 'მირჩიე ცხიმისმწველი',
-        icon: Flame,
-        color: '#CC3348', // Brick Red
-        message: 'მინდა წონის დაკლება. რომელი ცხიმისმწველი და L-კარნიტინი მირჩევ?',
+        title: 'ენერგია',
+        description: 'პრე-ვორქაუთი და კოფეინი',
+        icon: Zap,
+        color: '#0A7364', // Pine Green
+        message: 'მჭირდება ენერგია ვარჯიშისთვის. რა მირჩევ?',
     },
     {
         id: 3,
-        title: 'ენერგია და ძალა',
-        description: 'მირჩიე კრეატინი და Pre-workout',
-        icon: Zap,
-        color: '#0A7364', // Pine Green
-        message: 'მინდა ენერგიის და ძალის გაზრდა. რომელი კრეატინი და Pre-workout მირჩევ?',
+        title: 'წონის კლება',
+        description: 'fat burner-ები',
+        icon: Flame,
+        color: '#CC3348', // Brick Red
+        message: 'მინდა წონაში კლება. რა პროდუქტები დამეხმარება?',
     },
     {
         id: 4,
-        title: 'დამწყები ვარ',
-        description: 'ვარჯიშს ვიწყებ და რჩევა მჭირდება',
-        icon: User,
-        color: '#8B5CF6', // Purple
-        message: 'დამწყები ვარ, ახლა ვიწყებ ვარჯიშს. რა დანამატები მჭირდება დასაწყებად?',
+        title: 'ჯანმრთელობა',
+        description: 'ვიტამინები და მინერალები',
+        icon: Heart,
+        color: '#0A7364', // Pine Green
+        message: 'მინდა ზოგადი ჯანმრთელობის გაუმჯობესება. რა მირჩევ?',
     },
 ];
 

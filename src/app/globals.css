@@ -36,6 +36,16 @@
   --sterile-white: #ffffff;
   --sharp-black: #000000;
 
+  /* Amber TIP Box Colors */
+  --tip-bg: rgb(254 243 199);
+  /* amber-50 */
+  --tip-border: rgb(251 191 36);
+  /* amber-400 */
+  --tip-text: rgb(120 53 15);
+  /* amber-900 */
+  --tip-icon: rgb(245 158 11);
+  /* amber-500 */
+
   /* Sidebar */
   --sidebar: #fafafa;
   --sidebar-foreground: #000000;

@@ -95,14 +95,14 @@ export function ChatResponse({
                                     </div>
                                 )}
 
-                                {/* Practical Tip */}
+                                {/* Practical Tip - Amber style */}
                                 {parsed.tip && (
-                                    <div className="mt-4 p-4 rounded-xl" style={{ backgroundColor: 'rgba(10, 115, 100, 0.08)' }}>
+                                    <div className="mt-4 p-4 rounded-xl border" style={{ backgroundColor: 'var(--tip-bg)', borderColor: 'var(--tip-border)' }}>
                                         <div className="flex items-start gap-3">
-                                            <Lightbulb className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#0A7364' }} strokeWidth={1.5} />
+                                            <Lightbulb className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: 'var(--tip-icon)' }} strokeWidth={2} />
                                             <div>
-                                                <p className="font-semibold text-sm mb-1" style={{ color: '#0A7364' }}>პრაქტიკული რჩევა</p>
-                                                <p className="text-sm" style={{ color: '#065451' }}>{parsed.tip}</p>
+                                                <p className="font-semibold text-sm mb-1" style={{ color: 'var(--tip-text)' }}>პრაქტიკული რჩევა</p>
+                                                <p className="text-sm leading-relaxed" style={{ color: '#374151' }}>{parsed.tip}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -114,14 +114,14 @@ export function ChatResponse({
                                 <div className="prose prose-sm max-w-none text-foreground prose-headings:text-foreground prose-strong:text-foreground prose-a:text-primary hover:prose-a:underline">
                                     <ReactMarkdown>{parsed.intro || assistantContent}</ReactMarkdown>
                                 </div>
-                                {/* Practical Tip for non-product responses */}
+                                {/* Practical Tip - Amber style */}
                                 {parsed.tip && (
-                                    <div className="mt-4 p-4 rounded-xl" style={{ backgroundColor: 'rgba(10, 115, 100, 0.08)' }}>
+                                    <div className="mt-4 p-4 rounded-xl border" style={{ backgroundColor: 'var(--tip-bg)', borderColor: 'var(--tip-border)' }}>
                                         <div className="flex items-start gap-3">
-                                            <Lightbulb className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#0A7364' }} strokeWidth={1.5} />
+                                            <Lightbulb className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: 'var(--tip-icon)' }} strokeWidth={2} />
                                             <div>
-                                                <p className="font-semibold text-sm mb-1" style={{ color: '#0A7364' }}>პრაქტიკული რჩევა</p>
-                                                <p className="text-sm" style={{ color: '#065451' }}>{parsed.tip}</p>
+                                                <p className="font-semibold text-sm mb-1" style={{ color: 'var(--tip-text)' }}>პრაქტიკული რჩევა</p>
+                                                <p className="text-sm leading-relaxed" style={{ color: '#374151' }}>{parsed.tip}</p>
                                             </div>
                                         </div>
                                     </div>

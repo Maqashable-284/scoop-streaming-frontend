@@ -537,29 +537,29 @@ export default function Chat() {
                     {renderChatHistory()}
                 </div>
 
-                {/* Input area */}
-                <div className="">
+                {/* Input area - Pine Green style */}
+                <div className="border-t border-gray-100 bg-white">
                     <div className="max-w-4xl mx-auto px-6 py-4">
-                        <form onSubmit={handleSubmit} className="flex items-center gap-3">
+                        <form onSubmit={handleSubmit} className="relative">
                             <input
                                 type="text"
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
-                                placeholder="დაწერე Scoop ასისტენტს..."
+                                placeholder="დაწერე შენი კითხვა..."
                                 disabled={isLoading}
-                                className="flex-1 bg-background border border-border rounded-xl px-5 py-3.5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors disabled:opacity-50"
+                                className="w-full bg-white border border-gray-300 rounded-xl px-5 py-3.5 pr-14 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0A7364] focus:border-transparent transition-all disabled:opacity-50 disabled:bg-gray-50"
                             />
                             <button
                                 type="submit"
                                 disabled={isLoading || !input.trim()}
-                                className="p-3.5 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 text-white"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 rounded-lg hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed text-white"
                                 style={{ backgroundColor: '#0A7364' }}
                             >
                                 <Send className="w-5 h-5" strokeWidth={1.5} />
                             </button>
                         </form>
-                        <p className="text-center text-xs text-muted-foreground mt-3">
-                            Scoop AI • ქირონი • სპორტული კვების კონსულტანტი
+                        <p className="text-center text-xs text-gray-400 mt-3">
+                            Scoop AI • სპორტული კვების კონსულტანტი
                         </p>
                     </div>
                 </div>
