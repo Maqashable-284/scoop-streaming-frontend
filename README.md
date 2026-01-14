@@ -109,6 +109,13 @@ Description
 
 ## 📝 Changelog
 
+### v2.1.0 (Jan 15, 2026)
+- ✨ **Header Lightweight** - White bg, 32x32 green logo block, dark text
+- ✨ **New Chat Button** - Outline style with Plus icon, hover fills green
+- ✨ **Input Redesign** - rounded-xl like cards, 288px fixed sidebar
+- ✨ **Textarea** - Auto-resize with scroll, dynamic send/stop button
+- 🔧 Fixed Quick Reply borders (restored Pine Green hover)
+
 ### v2.0.0 (Jan 14, 2026)
 - ✨ Redesigned TIP boxes (Pine Green → Amber)
 - ✨ Horizontal ProductCard layout
