@@ -109,6 +109,14 @@ Description
 
 ## 📝 Changelog
 
+### v2.2.0 (Jan 15, 2026) - Streaming & Privacy
+- ✨ **SSE Streaming** - `/chat/stream` endpoint integration for faster perceived response
+- ✨ **Consent Modal** - GDPR-compliant history consent dialog
+- ✨ **Delete Data** - User can delete all their data with one click
+- ✨ **Session History** - Load conversation history from backend on sidebar click
+- ✨ **Loading Skeleton** - Beautiful skeleton loader while fetching history
+- 🔧 Fixed Quick Reply scroll to user message
+
 ### v2.1.0 (Jan 15, 2026)
 - ✨ **Header Lightweight** - White bg, 32x32 green logo block, dark text
 - ✨ **New Chat Button** - Outline style with Plus icon, hover fills green

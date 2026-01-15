@@ -244,7 +244,7 @@ export default function Chat() {
         return newId;
     }, []);
 
-    // Send message using /chat endpoint
+    // Send message using /chat endpoint (fallback for non-streaming)
     const sendMessage = useCallback(
         async (text: string) => {
             if (!text.trim() || isLoading) return;
@@ -327,9 +327,224 @@ export default function Chat() {
         [activeId, createNewConversation, isLoading, userId]
     );
 
+    // Send message using SSE streaming endpoint for faster perceived response
+    const sendMessageStream = useCallback(
+        async (text: string) => {
+            if (!text.trim() || isLoading) return;
+
+            let convId = activeId;
+            if (!convId) {
+                convId = createNewConversation();
+            }
+
+            setInput('');
+            setIsLoading(true);
+            // Reset textarea height
+            const textarea = document.querySelector('textarea');
+            if (textarea) textarea.style.height = '44px';
+
+            const userMessage: Message = {
+                id: generateId(),
+                role: 'user',
+                content: text.trim(),
+            };
+
+            // Add user message immediately
+            setConversations((prev) =>
+                prev.map((conv) =>
+                    conv.id === convId
+                        ? {
+                            ...conv,
+                            title: conv.messages.length === 0 ? text.slice(0, 25) + '...' : conv.title,
+                            messages: [...conv.messages, userMessage],
+                        }
+                        : conv
+                )
+            );
+
+            // Add empty assistant message that we'll update progressively
+            const assistantId = generateId();
+            setConversations((prev) =>
+                prev.map((conv) =>
+                    conv.id === convId
+                        ? {
+                            ...conv,
+                            messages: [...conv.messages, { id: assistantId, role: 'assistant' as const, content: '' }],
+                        }
+                        : conv
+                )
+            );
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/chat/stream`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        message: text,
+                        session_id: convId,
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const reader = response.body?.getReader();
+                const decoder = new TextDecoder();
+                let assistantContent = '';
+                let quickReplies: QuickReply[] = [];
+
+                if (!reader) {
+                    throw new Error('No response body');
+                }
+
+                // Read stream
+                let buffer = '';
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    // Keep incomplete line in buffer
+                    buffer = lines.pop() || '';
+
+                    for (const line of lines) {
+                        if (!line.startsWith('data: ')) continue;
+
+                        try {
+                            const data = JSON.parse(line.slice(6));
+
+                            if (data.type === 'text') {
+                                assistantContent += data.content;
+                                // Update message progressively
+                                setConversations((prev) =>
+                                    prev.map((conv) =>
+                                        conv.id === convId
+                                            ? {
+                                                ...conv,
+                                                messages: conv.messages.map((m) =>
+                                                    m.id === assistantId
+                                                        ? { ...m, content: assistantContent }
+                                                        : m
+                                                ),
+                                            }
+                                            : conv
+                                    )
+                                );
+                            } else if (data.type === 'products') {
+                                // Formatted products injection
+                                assistantContent += '\n\n' + data.content;
+                                setConversations((prev) =>
+                                    prev.map((conv) =>
+                                        conv.id === convId
+                                            ? {
+                                                ...conv,
+                                                messages: conv.messages.map((m) =>
+                                                    m.id === assistantId
+                                                        ? { ...m, content: assistantContent }
+                                                        : m
+                                                ),
+                                            }
+                                            : conv
+                                    )
+                                );
+                            } else if (data.type === 'tip') {
+                                assistantContent += data.content;
+                                setConversations((prev) =>
+                                    prev.map((conv) =>
+                                        conv.id === convId
+                                            ? {
+                                                ...conv,
+                                                messages: conv.messages.map((m) =>
+                                                    m.id === assistantId
+                                                        ? { ...m, content: assistantContent }
+                                                        : m
+                                                ),
+                                            }
+                                            : conv
+                                    )
+                                );
+                            } else if (data.type === 'quick_replies') {
+                                quickReplies = data.content.map((qr: { title: string; payload: string }) => ({
+                                    title: qr.title,
+                                    payload: qr.payload,
+                                }));
+                            } else if (data.type === 'done') {
+                                // Streaming complete
+                                break;
+                            } else if (data.type === 'error') {
+                                console.error('[Scoop] Stream error:', data.content);
+                                // Show error in chat
+                                assistantContent = 'დაფიქსირდა შეცდომა. გთხოვთ სცადოთ თავიდან.';
+                                setConversations((prev) =>
+                                    prev.map((conv) =>
+                                        conv.id === convId
+                                            ? {
+                                                ...conv,
+                                                messages: conv.messages.map((m) =>
+                                                    m.id === assistantId
+                                                        ? { ...m, content: assistantContent }
+                                                        : m
+                                                ),
+                                            }
+                                            : conv
+                                    )
+                                );
+                            }
+                        } catch {
+                            // Ignore JSON parse errors for incomplete chunks
+                        }
+                    }
+                }
+
+                // Final update with quick replies
+                if (quickReplies.length > 0) {
+                    setConversations((prev) =>
+                        prev.map((conv) =>
+                            conv.id === convId
+                                ? {
+                                    ...conv,
+                                    messages: conv.messages.map((m) =>
+                                        m.id === assistantId
+                                            ? { ...m, quickReplies }
+                                            : m
+                                    ),
+                                }
+                                : conv
+                        )
+                    );
+                }
+
+            } catch (error) {
+                console.error('[Scoop] Stream error:', error);
+                // Fallback to non-streaming on error
+                // Remove empty assistant message first
+                setConversations((prev) =>
+                    prev.map((conv) =>
+                        conv.id === convId
+                            ? {
+                                ...conv,
+                                messages: conv.messages.filter((m) => m.id !== assistantId),
+                            }
+                            : conv
+                    )
+                );
+                // Try non-streaming endpoint
+                await sendMessage(text);
+                return;
+            } finally {
+                setIsLoading(false);
+            }
+        },
+        [activeId, createNewConversation, isLoading, userId, sendMessage]
+    );
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        sendMessage(input);
+        // Use streaming endpoint for faster perceived response
+        sendMessageStream(input);
     };
 
     // Render logic to support history + ChatResponse
@@ -356,7 +571,7 @@ export default function Chat() {
         }
 
         if (!activeConversation || activeConversation.messages.length === 0) {
-            return <EmptyScreen setInput={(text: string) => sendMessage(text)} />;
+            return <EmptyScreen setInput={(text: string) => sendMessageStream(text)} />;
         }
 
         const items = [];
@@ -392,7 +607,7 @@ export default function Chat() {
                                 userMessage={msg.content}
                                 assistantContent={nextMsg.content}
                                 quickReplies={dynamicQuickReplies}
-                                onQuickReplyClick={(id, text) => sendMessage(text)}
+                                onQuickReplyClick={(id, text) => sendMessageStream(text)}
                             />
                         </div>
                     );
@@ -562,7 +777,7 @@ export default function Chat() {
                                     if (e.key === 'Enter' && !e.shiftKey) {
                                         e.preventDefault();
                                         if (input.trim() && !isLoading) {
-                                            sendMessage(input);
+                                            sendMessageStream(input);
                                         }
                                     }
                                 }}
