@@ -616,7 +616,7 @@ export default function Chat() {
                 // 2. User is last OR followed by empty assistant (streaming) & Loading -> Render ThinkingStepsLoader
                 else if (isLoading && (i === msgs.length - 1 || (nextMsg && nextMsg.role === 'assistant' && !nextMsg.content?.trim()))) {
                     items.push(
-                        <div key="loader" ref={lastUserMessageRef}>
+                        <div key="loader" ref={lastUserMessageRef} className="w-full">
                             <ThinkingStepsLoader userMessage={msg.content} />
                         </div>
                     );

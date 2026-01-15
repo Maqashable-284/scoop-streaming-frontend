@@ -51,7 +51,7 @@ export function ThinkingStepsLoader({ userMessage, onComplete }: ThinkingStepsLo
     };
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 w-full">
             {/* User message bubble */}
             {userMessage && (
                 <div className="flex justify-end">
@@ -64,8 +64,8 @@ export function ThinkingStepsLoader({ userMessage, onComplete }: ThinkingStepsLo
                 </div>
             )}
 
-            {/* AI Response Container */}
-            <div className="flex items-start gap-3">
+            {/* AI Response Container - Using grid for stable width */}
+            <div className="grid items-start gap-3 w-full" style={{ gridTemplateColumns: 'auto 1fr' }}>
                 {/* Scoop Logo with pulse ring */}
                 <div
                     className="relative w-8 h-8 rounded-xl border flex items-center justify-center flex-shrink-0 animate-pulse-ring"
@@ -74,10 +74,9 @@ export function ThinkingStepsLoader({ userMessage, onComplete }: ThinkingStepsLo
                     <ScoopLogo className="w-4 h-4" />
                 </div>
 
-                {/* Steps Container */}
+                {/* Steps Container - No border, matches ChatResponse style */}
                 <div
-                    className="flex-1 p-3 rounded-xl border"
-                    style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}
+                    className="min-w-0 py-1"
                     role="status"
                     aria-live="polite"
                 >
