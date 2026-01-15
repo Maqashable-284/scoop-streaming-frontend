@@ -4,7 +4,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Settings, Send, Menu, AlertTriangle, Square, ArrowRight } from 'lucide-react';
 import { EmptyScreen } from './empty-screen';
-import { ChatLoader } from './chat-loader';
+import { ThinkingStepsLoader } from './thinking-steps-loader';
 import { ChatResponse } from './chat-response';
 import { ScoopLogo } from './scoop-logo';
 import { Sidebar } from './sidebar';
@@ -585,8 +585,8 @@ export default function Chat() {
             if (msg.role === 'user') {
                 const nextMsg = msgs[i + 1];
 
-                // 1. User followed by Assistant -> Render ChatResponse (Pair)
-                if (nextMsg && nextMsg.role === 'assistant') {
+                // 1. User followed by Assistant with CONTENT -> Render ChatResponse (Pair)
+                if (nextMsg && nextMsg.role === 'assistant' && nextMsg.content && nextMsg.content.trim() !== '') {
                     // Convert backend quick_replies to ChatResponse format
                     // Pass undefined if empty so ChatResponse uses defaults
                     const qrList = nextMsg.quickReplies ?? [];
@@ -613,13 +613,17 @@ export default function Chat() {
                     );
                     i++; // Skip assistant message as it's consumed by ChatResponse
                 }
-                // 2. User is last message & Loading -> Render ChatLoader
-                else if (isLoading && i === msgs.length - 1) {
+                // 2. User is last OR followed by empty assistant (streaming) & Loading -> Render ThinkingStepsLoader
+                else if (isLoading && (i === msgs.length - 1 || (nextMsg && nextMsg.role === 'assistant' && !nextMsg.content?.trim()))) {
                     items.push(
                         <div key="loader" ref={lastUserMessageRef}>
-                            <ChatLoader userMessage={msg.content} />
+                            <ThinkingStepsLoader userMessage={msg.content} />
                         </div>
                     );
+                    // Skip the empty assistant message if it exists
+                    if (nextMsg && nextMsg.role === 'assistant') {
+                        i++;
+                    }
                 }
                 // 3. User is last message & NOT Loading (maybe error or waiting) -> Render Bubble
                 else {

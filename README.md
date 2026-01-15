@@ -74,6 +74,7 @@ src/
 ├── components/
 │   ├── Chat.tsx              # Main chat component, input field
 │   ├── chat-response.tsx     # TIP boxes (Amber)
+│   ├── thinking-steps-loader.tsx  # AI Thinking Steps (animated)
 │   ├── ProductCard.tsx       # Horizontal layout (Pine Green metadata)
 │   ├── empty-screen.tsx      # Category cards with icons
 │   └── sidebar.tsx           # Conversation history
@@ -108,6 +109,18 @@ Description
 - **Old Frontend:** [scoop-vercel](https://github.com/Maqashable-284/scoop-vercel)
 
 ## 📝 Changelog
+
+### v2.3.0 (Jan 15, 2026) - AI Thinking Steps Loader ✨
+- ✨ **ThinkingStepsLoader** - New animated 5-step loader during AI processing
+  - 📦 ვამოწმებ ხელმისაწვდომობას
+  - 🔍 ვეძებ შესაბამის პროდუქტებს
+  - 📄 ვადარებ მახასიათებლებს
+  - 🧮 ვითვლი საუკეთესო ფასს
+  - ✨ ვამზადებ რეკომენდაციას
+- ✨ **CSS Animations** - checkPop, thinkingBounce, progressShimmer, pulseRing
+- ✨ **Progress Bar** - Visual progress indicator with shimmer effect
+- ✨ **Accessibility** - `role="status"`, `aria-live="polite"`
+- 🔧 Fixed Chat.tsx render logic - ThinkingStepsLoader shows during streaming
 
 ### v2.2.0 (Jan 15, 2026) - Streaming & Privacy
 - ✨ **SSE Streaming** - `/chat/stream` endpoint integration for faster perceived response

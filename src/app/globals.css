@@ -163,6 +163,76 @@
   }
 }
 
+/* ThinkingStepsLoader Animations */
+@keyframes checkPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes thinkingBounce {
+
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+
+  30% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes progressShimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes pulseRing {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+.animate-check-pop {
+  animation: checkPop 300ms ease-out forwards;
+}
+
+.animate-thinking-bounce {
+  animation: thinkingBounce 1.4s ease-in-out infinite;
+}
+
+.animate-progress-shimmer {
+  animation: progressShimmer 1.5s ease-in-out infinite;
+}
+
+.animate-pulse-ring {
+  animation: pulseRing 2s ease-in-out infinite;
+}
+
 /* ============================================
    ProductCard Component Styles
    ============================================ */
