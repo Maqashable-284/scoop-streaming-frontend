@@ -1,7 +1,48 @@
 # Scoop AI - Project Context
 
-> 📋 ეს ფაილი შეიცავს პროექტის კონტექსტს ახალი AI სესიებისთვის.  
-> ახალ აგენტს მიეცით ინსტრუქცია: "წაიკითხე PROJECT_CONTEXT.md და..."
+> 📋 ეს ფაილი შეიცავს პროექტის კონტექსტს AI აგენტებისთვის.  
+> **ინსტრუქცია აგენტს:** "წაიკითხე PROJECT_CONTEXT.md და შეასრულე NEXT_TASK სექციაში მითითებული დავალება"
+
+---
+
+## 🎯 NEXT_TASK: LangGraph Implementation
+
+> [!IMPORTANT]  
+> **Claude Code-მა უნდა შეასრულოს ეს დავალება**
+
+### დავალება:
+შექმენი LangGraph არქიტექტურა Scoop AI-სთვის
+
+### ფაილები შესაქმნელად:
+```
+scoop-backend-original/
+├── graph/
+│   ├── __init__.py
+│   ├── state.py              # ScoopState TypedDict
+│   ├── builder.py            # StateGraph construction  
+│   └── nodes/
+│       ├── __init__.py
+│       ├── intent_classifier.py
+│       ├── product_search.py
+│       ├── profile_loader.py
+│       └── responder.py
+```
+
+### ნაბიჯები:
+1. `pip install langgraph langchain-google-genai`
+2. შექმენი `graph/state.py` - ScoopState definition
+3. შექმენი `graph/nodes/intent_classifier.py`  
+4. შექმენი `graph/nodes/product_search.py` - არსებული search_products ლოგიკა
+5. შექმენი `graph/nodes/profile_loader.py` - არსებული get_user_profile ლოგიკა
+6. შექმენი `graph/nodes/responder.py` - Gemini response
+7. შექმენი `graph/builder.py` - StateGraph
+8. შექმენი `/chat/v2` endpoint main.py-ში
+9. გატესტე და შეადარე latency `/chat/stream`-თან
+
+### არსებული ფაილები გასაანალიზებლად:
+- `main.py` - chat_stream endpoint (line ~1500)
+- `app/tools/user_tools.py` - search_products, get_user_profile
+- `prompts/system_prompt.py` - SYSTEM_PROMPT
 
 ---
 
@@ -11,6 +52,32 @@
 |---------|--------|---------------|
 | **Frontend** | [scoop-vercel-fresh](https://github.com/Maqashable-284/scoop-vercel-fresh) | https://scoop-vercel-358331686110.europe-west1.run.app |
 | **Backend** | [scoop-generative-ai-sdk-28-04](https://github.com/Maqashable-284/scoop-generative-ai-sdk-28-04) | https://scoop-ai-sdk-358331686110.europe-west1.run.app |
+
+---
+
+## 📂 ლოკალური ფაილები
+
+### Backend:
+```
+/Users/maqashable/Desktop/Claude/06-01-26/scoop-ai/scoop-backend-original/
+├── main.py                           # FastAPI server, chat_stream endpoint
+├── config.py                         # Settings, env vars
+├── app/
+│   ├── tools/user_tools.py           # search_products, get_user_profile
+│   └── memory/mongo_store.py         # DatabaseManager, MongoDB
+└── prompts/system_prompt.py          # SYSTEM_PROMPT, AI personality
+```
+
+### Frontend:
+```
+/Users/maqashable/Desktop/Claude/06-01-26/scoop-ai/scoop-frontend-original/
+├── src/components/
+│   ├── Chat.tsx                      # Main chat, SSE streaming
+│   ├── chat-response.tsx             # Response renderer
+│   └── chat-loader.tsx               # ThinkingStepsLoader
+└── src/lib/
+    └── parseProducts.ts              # Markdown parser
+```
 
 ---
 
@@ -28,69 +95,23 @@ cd scoop-frontend-original && npm run dev
 
 ## ☁️ Cloud Run - ავტო-დეპლოი
 
-GitHub-ზე `main` ბრენჩზე push = ავტომატური Cloud Run დეპლოი
+GitHub `main` → Cloud Build → Cloud Run (ავტომატური)
 
-| რეპო | Cloud Run Service | Trigger |
-|------|-------------------|---------|
-| scoop-generative-ai-sdk-28-04 | scoop-ai-sdk | ✅ Active |
-| scoop-vercel-fresh | scoop-vercel | ✅ Active |
-
----
-
-## 📁 მთავარი ფაილები
-
-### Frontend
-```
-src/
-├── components/
-│   ├── Chat.tsx              # მთავარი chat კომპონენტი
-│   ├── chat-response.tsx     # პასუხის რენდერი
-│   └── ProductCard.tsx       # პროდუქტის ბარათი
-├── lib/
-│   └── parseProducts.ts      # Markdown → Product parsing
-```
-
-### Backend
-```
-├── main.py                   # FastAPI server + streaming
-├── config.py                 # Settings + env vars
-├── app/tools/user_tools.py   # search_products, get_user_profile
-├── app/memory/mongo_store.py # MongoDB manager
-└── prompts/system_prompt.py  # AI personality + rules
-```
+| რეპო | Service | Trigger |
+|------|---------|---------|
+| scoop-generative-ai-sdk-28-04 | scoop-ai-sdk | ✅ |
+| scoop-vercel-fresh | scoop-vercel | ✅ |
 
 ---
 
-## 📅 სესიის შეჯამება - 2026-01-16
+## 📅 სესიის ისტორია
 
-### ✅ დღეს გაკეთებული:
-
-1. **პროექტების გაწმენდა**
-   - წაშლილია ყველა დუბლიკატი პროექტი
-   - დარჩა მხოლოდ: `scoop-frontend-original`, `scoop-backend-original`
-   - ახლიდან დაკლონდა GitHub-დან
-
-2. **Cloud Run გაწმენდა**
-   - წაშლილია 11 ზედმეტი სერვისი (europe-west1 + us-central1)
-   - დარჩა მხოლოდ: `scoop-ai-sdk`, `scoop-vercel`
-
-3. **CI/CD Setup (Cloud Build Triggers)**
-   - Backend: Dockerfile დაემატა რეპოში
-   - Environment Variables დაყენდა Cloud Run-ზე
-   - ავტო-დეპლოი GitHub → Cloud Run ჩართულია
-
-4. **MongoDB Pooling Optimization**
-   - maxPoolSize=5, waitQueueTimeoutMS=2500
-
-5. **Parser Brand Detection Fix**
-   - Fallback for plain text brands in parseProducts.ts
-
----
-
-## ⚠️ ცნობილი პრობლემები
-
-- [ ] **Thinking UI** - საჭიროებს `scoop-thinking-test` backend-ს (port 8081)
-- [ ] **ThinkingStepsLoader width bug** - container ვიწროვდება loading-ზე
+### 2026-01-16:
+- ✅ Cloud Run cleanup (11 სერვისი წაშლილია)
+- ✅ CI/CD Setup (Cloud Build Triggers)
+- ✅ Thinking UI მუშაობს
+- ✅ PROJECT_CONTEXT.md შექმნილია
+- 🔄 LangGraph Implementation დაგეგმილია
 
 ---
 
@@ -105,6 +126,7 @@ src/
 │      Next.js                │      FastAPI + Gemini             │
 │                             │                                   │
 │  NEXT_PUBLIC_BACKEND_URL ───┼──────► /chat/stream               │
+│                             │        /chat/v2 (LangGraph)       │
 │                             │        /health                    │
 └─────────────────────────────┴───────────────────────────────────┘
                                          │
@@ -117,4 +139,20 @@ src/
 
 ---
 
-**Last Updated:** 2026-01-16T15:34
+## 🎯 LangGraph Target Architecture
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                    LangGraph StateGraph                       │
+├──────────────┬───────────────┬───────────────┬───────────────┤
+│  START       │  intent_node  │  search_node  │  response_    │
+│     ○───────▶│   (Router)    │──▶ (MongoDB)  │──▶ node       │
+│              │               │               │       │       │
+│              │    ▼ allergy  │               │       ▼       │
+│              │  profile_node │               │     END       │
+└──────────────┴───────────────┴───────────────┴───────────────┘
+```
+
+---
+
+**Last Updated:** 2026-01-16T16:46
