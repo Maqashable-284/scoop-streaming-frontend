@@ -1,49 +1,68 @@
 # Scoop AI - Project Context
 
-> 📋 ეს ფაილი შეიცავს პროექტის კონტექსტს AI აგენტებისთვის.  
+> 📋 ეს ფაილი შეიცავს პროექტის სრულ კონტექსტს და ისტორიას AI აგენტებისთვის.  
 > **ინსტრუქცია აგენტს:** "წაიკითხე PROJECT_CONTEXT.md და შეასრულე NEXT_TASK სექციაში მითითებული დავალება"
 
 ---
 
-## ✅ COMPLETED: V2 Finalization (2026-01-16)
+## 📜 პროექტის ისტორია (Changelog)
 
-### რა გაკეთდა:
+### 2026-01-16 | V2 Finalization ✅
+**Memory Fix + Frontend V2 Integration**
+- `builder.py` - დაემატა `conversation_history` პარამეტრი
+- `main.py` - Gemini→LangChain ფორმატის კონვერტერი
+- `Chat.tsx` - `/chat/stream` → `/chat/v2`
+- **ვერიფიცირებული:** 3-step მეხსიერების ტესტი (დიაბეტი გახსოვდა)
 
-#### Task #1: Memory Fix ✅
-**პრობლემა:** `run_graph()` ფუნქცია ყოველთვის `messages: []` აგზავნიდა - ისტორია არ გადაეცემოდა LangGraph-ს.
+### 2026-01-16 | Intent Classifier Fix ✅
+**Turing Test #3 გასწორება**
+- `intent_classifier.py` - Gemini prompt განახლება
+- პროდუქტის ძიება პრიორიტეტულია მისალმებაზე
+- მაგ: "გამარჯობა, მაქვს კრეატინი?" → product_search (არა greeting)
 
-**ფიქსი:**
-1. `builder.py` - დაემატა `conversation_history` პარამეტრი `run_graph()` ფუნქციას
-2. `main.py` - დაემატა Gemini→LangChain ფორმატის კონვერტერი:
-   - Gemini: `{'role': 'user/model', 'parts': [{'text': '...'}]}`
-   - LangChain: `{'role': 'user/assistant', 'content': '...'}`
+### 2026-01-16 | LangGraph Implementation ✅
+**არქიტექტურა:**
+```
+scoop-backend-original/graph/
+├── __init__.py
+├── state.py              # ScoopState TypedDict
+├── builder.py            # StateGraph construction + run_graph()
+└── nodes/
+    ├── intent_classifier.py  # Gemini-powered routing
+    ├── product_search.py     # MongoDB Atlas Search
+    └── responder.py          # Gemini response generation
+```
 
-**ვერიფიკაცია (3-step curl test):**
-| Step | შეტყობინება | შედეგი |
-|------|-------------|--------|
-| 1 | "მაქვს დიაბეტი..." | ✅ მოდელმა აღიარა |
-| 2 | "რა გაქვთ?" | ✅ **გახსოვდა:** "რადგან აღნიშნეთ, რომ გაქვთ დიაბეტი" |
-| 3 | "რომელი მირჩევ?" | ✅ **გახსოვდა:** "რადგან დიაბეტი გაქვთ" |
+### 2026-01-15 | Thinking UI ✅
+**Georgian Thinking Steps:**
+- `thinking-steps-loader.tsx` - პროგრესის ინდიკატორი
+- Google Translate API - სერვერზე თარგმანი
+- Container width stability fix
 
-#### Task #2: MongoDB Verification ✅
-- ისტორია სწორად ინახება და იტვირთება
+### 2026-01-14 | Product Card UI ✅
+**ახალი დიზაინი:**
+- ჰორიზონტალური პროდუქტის კარდები
+- Pine Green მეტადატა
+- `scoop.ge` pill
+- Amber TIP box
 
-#### Task #3: Frontend V2 Integration ✅
-- `Chat.tsx` - SSE `/chat/stream` შეიცვალა JSON `/chat/v2` -ით
-- Response handling გამარტივდა (არ არის streaming parsing)
+### 2026-01-13 | Memory System ✅
+**MongoDB Integration:**
+- `mongo_store.py` - ConversationStore, UserStore
+- Session management (7-day TTL)
+- History pruning with summarization
 
 ---
 
 ## 🎯 NEXT_TASK: Frontend Local Testing
 
 > [!IMPORTANT]  
-> **შემდეგი ნაბიჯი:** ფრონტენდის ლოკალური ტესტირება
+> **ფრონტენდის ლოკალური ტესტირება**
 
-### ნაბიჯები:
 ```bash
 cd scoop-frontend-original && npm run dev
 # გახსენი http://localhost:3000
-# გატესტე ჩატი - შეამოწმე V2 endpoint-ის მუშაობა
+# გატესტე: 1) ჩატი მუშაობს 2) მეხსიერება მუშაობს 3) პროდუქტები ჩანს
 ```
 
 ---
@@ -54,23 +73,34 @@ cd scoop-frontend-original && npm run dev
 ```
 /Users/maqashable/Desktop/Claude/06-01-26/scoop-ai/scoop-backend-original/
 ├── main.py                    # FastAPI + /chat/v2 endpoint
+├── config.py                  # Settings & environment
 ├── graph/
-│   ├── builder.py            # run_graph() with conversation_history ✅
+│   ├── builder.py            # run_graph(conversation_history=...)
 │   ├── state.py              # ScoopState TypedDict
 │   └── nodes/
-│       ├── intent_classifier.py
-│       ├── product_search.py
-│       └── responder.py
-├── app/memory/mongo_store.py  # Gemini format history storage
-└── prompts/system_prompt.py
+│       ├── intent_classifier.py  # Gemini intent detection
+│       ├── product_search.py     # MongoDB product search
+│       └── responder.py          # Gemini response generation
+├── app/
+│   ├── memory/mongo_store.py     # Conversation & User persistence
+│   ├── catalog/loader.py         # Product catalog loading
+│   └── cache/context_cache.py    # Gemini context caching
+└── prompts/system_prompt.py      # Georgian system prompt
 ```
 
 ### Frontend:
 ```
 /Users/maqashable/Desktop/Claude/06-01-26/scoop-ai/scoop-frontend-original/
-├── src/components/Chat.tsx    # Uses /chat/v2 now ✅
-├── src/components/chat-response.tsx
-└── src/lib/parseProducts.ts
+├── src/
+│   ├── components/
+│   │   ├── Chat.tsx              # Main chat (uses /chat/v2)
+│   │   ├── chat-response.tsx     # Message rendering
+│   │   └── thinking-steps-loader.tsx  # Loading animation
+│   ├── lib/
+│   │   └── parseProducts.ts      # Product card parsing
+│   └── app/
+│       └── globals.css           # Styling
+└── next.config.ts
 ```
 
 ---
@@ -96,29 +126,35 @@ cd scoop-frontend-original && npm run dev
 │  START       │  intent_node  │  search_node  │  responder    │
 │     ○───────▶│   (Gemini)    │──▶ (MongoDB)  │──▶ (Gemini)   │
 │              │       │       │               │       │       │
-│              │   conversation_history        │       ▼       │
-│              │      passed throughout        │     END       │
+│              │   Routing:    │  Products:    │  Response:    │
+│              │  - greeting   │  - filter     │  - Georgian   │
+│              │  - product    │  - categories │  - tips       │
+│              │  - general    │  - sort       │  - qr         │
 └──────────────┴───────────────┴───────────────┴───────────────┘
+                     │
+                     ▼
+              conversation_history
+              (passed throughout)
 ```
 
 ---
 
-## 🔧 ბოლო ცვლილებები (2026-01-16)
+## 🔧 Key Code Changes (Jan 16)
 
-### builder.py
+### Memory Fix - builder.py
 ```python
-# BEFORE:
+# BEFORE: History never passed
 def run_graph(user_id, message, session_id):
-    initial_state = {"messages": []}  # ❌ ცარიელი
+    initial_state = {"messages": []}  # ❌
 
-# AFTER:
+# AFTER: History flows through
 def run_graph(user_id, message, session_id, conversation_history=None):
-    initial_state = {"messages": conversation_history or []}  # ✅ ისტორია
+    initial_state = {"messages": conversation_history or []}  # ✅
 ```
 
-### main.py (/chat/v2)
+### Format Converter - main.py
 ```python
-# გემინი→ლანგჩეინ კონვერტერი:
+# Convert Gemini→LangChain format
 langchain_history = []
 for msg in history:
     role = msg.get("role", "user")
@@ -126,17 +162,15 @@ for msg in history:
     content = parts[0].get("text", "") if parts else ""
     lc_role = "assistant" if role == "model" else role
     langchain_history.append({"role": lc_role, "content": content})
-
-result = run_graph(..., conversation_history=langchain_history)
 ```
 
-### Chat.tsx
+### Frontend V2 - Chat.tsx
 ```typescript
-// BEFORE: SSE streaming
+// BEFORE: SSE streaming (complex)
 const response = await fetch(`${BACKEND_URL}/chat/stream`, ...);
-// Complex SSE parsing...
+// SSE parsing...
 
-// AFTER: Simple JSON
+// AFTER: Simple JSON (V2)
 const response = await fetch(`${BACKEND_URL}/chat/v2`, ...);
 const data = await response.json();
 const responseText = data.response_text_geo || data.response;
@@ -144,4 +178,31 @@ const responseText = data.response_text_geo || data.response;
 
 ---
 
-**Last Updated:** 2026-01-16T19:29
+## 🧪 Turing Test Suite (5/5 Pass)
+
+| Test | სცენარი | სტატუსი |
+|------|---------|---------|
+| #1 | Safety (ანაბოლიკები) | ✅ უარყოფა |
+| #2 | Budget (100₾) | ✅ ფილტრაცია |
+| #3 | Greeting+Product | ✅ intent fix |
+| #4 | Non-existent (ჰოლოგრამა) | ✅ სწორი უარყოფა |
+| #5 | Logic Paradox | ✅ ადეკვატური |
+
+---
+
+## 🔐 Environment Variables
+
+```bash
+# Required
+GEMINI_API_KEY=...
+MONGODB_URI=mongodb+srv://...
+GOOGLE_CLOUD_PROJECT=...
+
+# Optional
+PORT=8080
+ALLOWED_ORIGINS=*
+```
+
+---
+
+**Last Updated:** 2026-01-16T19:32
