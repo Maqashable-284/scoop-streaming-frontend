@@ -10,10 +10,57 @@
 ### 2026-01-17 | AI Evaluation Framework ✅
 **მრავალფეიზიანი Evaluation System-ის დანერგვა**
 
-- **Local Runner** (`evals/runner.py`): 25 ტესტი, LLM Judge (Gemini), HTML Dashboard
-- **Braintrust Integration**: Cloud-based evaluation
-- **Vertex AI Runner**: GCP Vertex AI Gen AI Evaluation Service
+#### შესრულებული სამუშაოები:
+
+**1. Local Runner (`evals/runner.py`)**
+- 25 ტესტის სრული სუიტა (Simple, Context, Medical, Ethics, Logic)
+- LLM Judge სისტემა Gemini-ით (`gemini-3-flash-preview`)
+- Multi-turn conversation handling სესიის ID-ით
+- HTML Dashboard ავტომატური გენერაცია
 - **შედეგი:** 88% (22/25 tests passed)
+
+**2. Braintrust Integration (`evals/braintrust_runner.py`)**
+- Braintrust.dev ინტეგრაცია cloud-based evaluation-ისთვის
+- Data generator multi-turn format-ით
+- LLM Judge scorer metadata handling fix
+- **პრობლემა:** Score regression (73%→31%) metadata passing issue
+
+**3. Vertex AI Runner (`evals/vertex_ai_runner.py`)**
+- Google Cloud Vertex AI Gen AI Evaluation Service ინტეგრაცია
+- `GENERAL_QUALITY` adaptive rubrics
+- Console-ში გრაფების ნახვა შესაძლებელი
+- **GCP Project:** `gen-lang-client-0366926113`
+
+**4. Test Cases (`evals/test_cases.yaml`)**
+```yaml
+5 კატეგორია x 5 ტესტი = 25 ტესტი:
+- Simple: ფასი, მარაგი, გამოყენება, გემოები, დეფინიცია
+- Context: აზრის შეცვლა, ბიუჯეტი, რაოდენობა, გამორიცხვა, მესამე პირი
+- Medical: SSRI, კრეატინინი, ფიტოესტროგენი, კეტო, პარესთეზია
+- Ethics: კოფეინი, კვება, იმედგაცრუება, ახალბედა, კონკურენტი
+- Logic: Jailbreak, შეუძლებელი, ორმაგი უარყოფა, ჰიპოთეტური, SQL Injection
+```
+
+**5. Query Map Fix (`app/tools/user_tools.py`)**
+- დაემატა Georgian→English keyword translations:
+  - "გეინერ" → ["gainer", "mass", "weight gainer"]
+  - "უშაქრო" → ["zero sugar", "sugar free"]
+  - ბრენდები: "ოპტიმუმ", "მუტანტი", "სელუკორ"
+
+#### 📊 Evaluation Results (Jan 17):
+| Set | Passed | Score | Status |
+|-----|--------|-------|--------|
+| Simple | 4/5 | 80% | ⚠️ |
+| Context | 5/5 | 100% | ✅ |
+| Medical | 5/5 | 100% | ✅ |
+| Ethics | 3/5 | 60% | ⚠️ |
+| Logic | 5/5 | 100% | ✅ |
+| **TOTAL** | **22/25** | **88%** | ✅ |
+
+**ჩავარდნილი ტესტები:**
+- `S2` - გეინერი (პროდუქტი არ არსებობს კატალოგში)
+- `E1` - კოფეინის კონტექსტი (Gemini hallucination)
+- `E2` - კვებითი აშლილობა (backend timeout)
 
 ---
 
