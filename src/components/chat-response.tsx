@@ -42,7 +42,7 @@ export function ChatResponse({
     const hasProducts = parsed.products.length > 0;
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 w-full">
             {/* User message */}
             {userMessage && (
                 <div className="flex justify-end">
@@ -52,14 +52,18 @@ export function ChatResponse({
                 </div>
             )}
 
-            {/* Assistant response */}
-            <div className="flex items-start gap-4">
-                {/* Scoop icon */}
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl border border-border flex items-center justify-center bg-card flex-shrink-0" style={{ backgroundColor: 'white', borderColor: '#e5e7eb' }}>
-                    <ScoopLogo className="w-5 h-5 md:w-6 md:h-6" />
+            {/* Assistant response - Using stable grid class for consistent width */}
+            <div className="ai-response-grid">
+                {/* Scoop icon - fixed 32px width matching ThinkingStepsLoader */}
+                <div
+                    className="w-8 h-8 rounded-xl border flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: 'white', borderColor: '#E5E7EB' }}
+                >
+                    <ScoopLogo className="w-4 h-4" />
                 </div>
 
-                <div className="flex-1 space-y-4">
+                {/* Content - uses stable content class */}
+                <div className="ai-response-content space-y-4">
                     {assistantContent ? (
                         hasProducts ? (
                             // Render with ProductCards
@@ -134,9 +138,9 @@ export function ChatResponse({
                 </div>
             </div>
 
-            {/* Quick reply buttons */}
+            {/* Quick reply buttons - aligned with content (offset by icon) */}
             {quickReplies && quickReplies.length > 0 && (
-                <div className="flex flex-wrap gap-2 pt-4 ml-14">
+                <div className="flex flex-wrap gap-2 pt-4" style={{ marginLeft: 'calc(32px + 12px)' }}>
                     {quickReplies.map((reply) => (
                         <button
                             key={reply.id}

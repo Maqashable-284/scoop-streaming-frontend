@@ -400,6 +400,7 @@
   flex-direction: column;
   gap: 16px;
   margin-top: 16px;
+  width: 100%;
 }
 
 /* Response Intro */
@@ -408,4 +409,45 @@
   line-height: 1.7;
   color: var(--foreground);
   margin-bottom: 8px;
+}
+
+/* ============================================
+   Container Width Stability Fix
+   Prevents layout shift during loading→response transition
+   ============================================ */
+
+/* Ensure chat content wrapper maintains stable width */
+.chat-content-wrapper {
+  width: 100%;
+  max-width: 56rem; /* 896px = max-w-4xl */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+/* Stable grid layout for AI response containers - use fixed pixel width for icon column */
+.ai-response-grid {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr); /* Fixed 32px for icon, flexible content */
+  gap: 12px;
+  align-items: start;
+  width: 100%;
+}
+
+/* Prevent content width shifts - force content to respect container */
+.ai-response-content {
+  min-width: 0; /* Critical: allows flexbox/grid children to shrink below content size */
+  width: 100%;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+/* Stable scroll container with always-visible scrollbar gutter */
+.chat-scroll-container {
+  scrollbar-gutter: stable;
+  overflow-y: scroll; /* Always show scrollbar track to prevent width shift */
 }

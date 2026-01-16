@@ -10,7 +10,7 @@ import { ScoopLogo } from './scoop-logo';
 import { Sidebar } from './sidebar';
 
 // Backend API URL - Production Cloud Run
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://scoop-ai-sdk-358331686110.europe-west1.run.app';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
 
 interface QuickReply {
     title: string;
@@ -552,15 +552,15 @@ export default function Chat() {
         // Show skeleton while loading history to prevent layout shift
         if (isLoadingHistory) {
             return (
-                <div className="max-w-3xl mx-auto px-6 py-6 space-y-6 animate-pulse">
+                <div className="chat-content-wrapper space-y-6 animate-pulse">
                     {/* Skeleton for user message */}
                     <div className="flex justify-end">
                         <div className="bg-gray-200 h-10 w-48 rounded-xl" />
                     </div>
-                    {/* Skeleton for assistant message */}
-                    <div className="flex gap-3">
+                    {/* Skeleton for assistant message - uses stable grid */}
+                    <div className="ai-response-grid">
                         <div className="w-8 h-8 rounded-lg bg-gray-200 flex-shrink-0" />
-                        <div className="flex-1 space-y-2">
+                        <div className="ai-response-content space-y-2">
                             <div className="bg-gray-200 h-4 w-full rounded" />
                             <div className="bg-gray-200 h-4 w-3/4 rounded" />
                             <div className="bg-gray-200 h-4 w-1/2 rounded" />
@@ -571,7 +571,11 @@ export default function Chat() {
         }
 
         if (!activeConversation || activeConversation.messages.length === 0) {
-            return <EmptyScreen setInput={(text: string) => sendMessageStream(text)} />;
+            return (
+                <div className="chat-content-wrapper space-y-8">
+                    <EmptyScreen setInput={(text: string) => sendMessageStream(text)} />
+                </div>
+            );
         }
 
         const items = [];
@@ -602,7 +606,7 @@ export default function Chat() {
                     const isLastPair = i + 1 === msgs.length - 1;
 
                     items.push(
-                        <div key={msg.id} ref={isLastPair ? lastUserMessageRef : undefined}>
+                        <div key={msg.id} ref={isLastPair ? lastUserMessageRef : undefined} className="w-full">
                             <ChatResponse
                                 userMessage={msg.content}
                                 assistantContent={nextMsg.content}
@@ -638,7 +642,7 @@ export default function Chat() {
         }
 
         return (
-            <div className="max-w-4xl mx-auto px-6 py-6 space-y-8">
+            <div className="chat-content-wrapper space-y-8">
                 {items}
                 <div ref={messagesEndRef} />
             </div>
@@ -646,7 +650,7 @@ export default function Chat() {
     };
 
     return (
-        <div className="flex h-screen bg-background overflow-hidden">
+        <div className="flex h-screen bg-background overflow-hidden w-full max-w-[1184px]">
             <Sidebar
                 conversations={conversations.map((c) => ({
                     id: c.id,
@@ -759,8 +763,8 @@ export default function Chat() {
                     </button>
                 </div>
 
-                {/* Chat content */}
-                <div className="flex-1 overflow-y-auto bg-background" style={{ scrollbarGutter: 'stable' }}>
+                {/* Chat content - uses stable scroll container class */}
+                <div className="flex-1 chat-scroll-container bg-background">
                     {renderChatHistory()}
                 </div>
 
@@ -828,7 +832,7 @@ export default function Chat() {
                             )}
                         </form>
                         <p className="text-center text-xs text-gray-400 mt-3">
-                            Scoop AI • სპორტული კვების კონსულტანტი
+                            გაითვალისწინეთ, AI ასისტენტმა შეიძლება დაუშვას შეცდომა. ჯანმრთელობის საკითხებზე გაიარეთ კონსულტაცია სპეციალისტთან.
                         </p>
                     </div>
                 </div>
