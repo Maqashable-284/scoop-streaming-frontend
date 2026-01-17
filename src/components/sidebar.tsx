@@ -304,10 +304,9 @@ export function Sidebar({
 
             <div
                 className={`
-                fixed inset-y-0 left-0 z-50 flex-shrink-0 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0
+                fixed inset-y-0 left-0 z-50 flex-shrink-0 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 w-full lg:w-72
                 ${isOpen ? 'translate-x-0' : '-translate-x-full'}
             `}
-                style={{ width: '288px', minWidth: '288px', maxWidth: '288px' }}
             >
                 <div className="h-full flex flex-col bg-sidebar border-r border-sidebar-border overflow-hidden">
                     {/* New conversation button - Gemini Style */}
