@@ -1094,7 +1094,8 @@
     padding-bottom: calc(16px + env(safe-area-inset-bottom));
     background: #fff;
     border-top: 1px solid #E5E7EB;
-    z-index: 50;
+    z-index: 40;
+    /* Sidebar-ზე (z-50) დაბალი */
     max-width: 100%;
   }
 
