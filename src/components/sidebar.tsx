@@ -21,7 +21,8 @@ import {
     Flame,
     Heart,
     HelpCircle,
-    Settings
+    Settings,
+    PenLine
 } from 'lucide-react';
 import { groupConversationsByDate } from '../lib/groupConversations';
 import { LucideIcon } from 'lucide-react';
@@ -260,7 +261,7 @@ export function Sidebar({
                             <button
                                 key={conv.id}
                                 onClick={() => onSelect(conv.id)}
-                                className={`w-full min-w-0 text-left px-3 py-2.5 rounded-lg text-sm transition-all flex items-center gap-3 group relative overflow-hidden ${isActive
+                                className={`w-full min-w-0 text-left px-3 py-2.5 rounded-lg text-sm transition-all flex items-center gap-3 group relative overflow-hidden cursor-pointer ${isActive
                                     ? 'bg-green-50 text-foreground font-medium shadow-sm'
                                     : 'text-muted-foreground hover:bg-sidebar-accent hover:text-foreground'
                                     }`}
@@ -309,35 +310,28 @@ export function Sidebar({
                 style={{ width: '288px', minWidth: '288px', maxWidth: '288px' }}
             >
                 <div className="h-full flex flex-col bg-sidebar border-r border-sidebar-border overflow-hidden">
-                    {/* New conversation button */}
+                    {/* New conversation button - Gemini Style */}
                     <div className="p-4">
                         <button
                             onClick={onNewChat}
                             aria-label="ახალი საუბრის დაწყება"
                             tabIndex={0}
-                            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-semibold transition-all duration-150 ease-in-out border-2 border-[#0A7364] bg-white text-[#0A7364] hover:bg-[#0A7364] hover:text-white active:scale-[0.98] active:bg-[#085C50] focus:outline-none focus:ring-2 focus:ring-[#0A7364] focus:ring-offset-2"
-                            style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}
+                            className="flex items-center gap-3 py-3 px-4 rounded-full text-gray-700 hover:bg-gray-100 transition-all duration-150 ease-in-out active:scale-[0.98] cursor-pointer"
                         >
-                            <Plus className="w-5 h-5" strokeWidth={2.5} />
-                            <span className="text-sm">ახალი საუბარი</span>
+                            <PenLine className="w-5 h-5" strokeWidth={1.5} />
+                            <span className="text-base font-medium">ახალი საუბარი</span>
                         </button>
                     </div>
 
-                    {/* Close button for mobile */}
+                    {/* Close button - Mobile ONLY */}
                     <button
                         onClick={onClose}
-                        className="absolute top-4 right-4 p-1.5 hover:bg-sidebar-accent rounded-md lg:hidden transition-colors"
+                        className="close-btn-modern absolute top-4 right-4 lg:hidden z-50"
+                        aria-label="დახურვა"
                     >
-                        <X className="w-5 h-5" />
+                        <X className="w-5 h-5" strokeWidth={1.5} />
                     </button>
-
-                    {/* Recent conversations */}
                     <div className="flex-1 px-4 overflow-y-auto" style={{ scrollbarGutter: 'stable' }}>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4 font-medium">
-                            <MessageSquare className="w-4 h-4" strokeWidth={1.5} />
-                            <span>ბოლო საუბრები</span>
-                        </div>
-
                         {conversations.length === 0 ? (
                             <div className="text-sm text-muted-foreground/60 py-8 text-center">
                                 საუბრები არ არის...

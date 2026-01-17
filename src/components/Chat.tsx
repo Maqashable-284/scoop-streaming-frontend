@@ -207,20 +207,17 @@ export default function Chat() {
         }
     }, []);
 
-    // Auto-scroll: scroll to user's message so response starts visible
+    // Auto-scroll: scroll მხოლოდ ერთხელ loading დაწყებისას
     useEffect(() => {
-        // When loading starts, scroll to end (to show loader)
-        // When response arrives, scroll to user message (to show from beginning)
-        if (isLoading) {
-            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-        } else if (lastUserMessageRef.current) {
-            // Scroll user message to top with some padding
+        // Scroll მხოლოდ user message-მდე, რომ პასუხი მის ქვემოთ დაიწყოს
+        // არ scroll-ავთ response streaming-ის დროს
+        if (isLoading && lastUserMessageRef.current) {
             lastUserMessageRef.current.scrollIntoView({
                 behavior: 'smooth',
                 block: 'start'
             });
         }
-    }, [activeConversation?.messages, isLoading]);
+    }, [isLoading]); // მხოლოდ isLoading, არა messages!
 
     // Create new conversation - just reset to empty screen
     const startNewChat = useCallback(() => {
