@@ -110,6 +110,18 @@ Description
 
 ## 📝 Changelog
 
+### v2.5.0 (Jan 17, 2026) - Gemini-Style Layout ✨
+- ✨ **Gemini-Style Empty State** - Centered welcome layout like Google Gemini
+  - Desktop: Centered vertically and horizontally
+  - Mobile: Left-aligned, fixed bottom input
+- ✨ **WelcomeSection** - Custom component with logo + "გამარჯობა!" greeting
+- ✨ **QuickActionPills** - Horizontal row of 5 quick action buttons
+  - Pills: პროტეინი, კრეატინი, ვიტამინები, ჯანმრთელობა, წონა
+  - Single-line layout on desktop, proper wrapping on mobile
+- ✨ **Conditional Header** - Hidden in empty state, shows after first message
+- 🔧 **Quick Reply Buttons** - Styled to match pills (white bg, gray border)
+- 🔧 **CSS Grid Stability** - Fixed layout shift issues during loading
+
 ### v2.3.0 (Jan 15, 2026) - AI Thinking Steps Loader ✨
 - ✨ **ThinkingStepsLoader** - New animated 5-step loader during AI processing
   - 📦 ვამოწმებ ხელმისაწვდომობას
