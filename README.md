@@ -110,6 +110,14 @@ Description
 
 ## 📝 Changelog
 
+### v2.5.0 (Jan 17, 2026) - Gemini-Style Chat Layout 💬
+- ✨ **Centered Empty State** - Input, welcome message, and quick pills centered
+- ✨ **WelcomeSection** - Georgian greeting "გამარჯობა! რით შემიძლია დაგეხმაროთ დღეს?"
+- ✨ **QuickActionPills** - Clickable quick suggestions (პროტეინი, კრეატინი, etc.)
+- ✨ **Conditional Header** - Hidden on empty state, shown after first message
+- 🔧 Input moves to fixed bottom position when chat is active
+- 🔧 Smooth layout transition on first message
+
 ### v2.4.0 (Jan 17, 2026) - Gemini-Style Sidebar Redesign 🎨
 - ✨ **New Chat Button** - Gemini-inspired design with PenLine icon
 - ✨ **Cursor Pointer** - All interactive sidebar elements now show pointer cursor
