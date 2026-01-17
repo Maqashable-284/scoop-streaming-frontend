@@ -1,82 +1,34 @@
-# Scoop AI - Project Context
+# Scoop AI - Frontend Project Context
 
-> 📋 ეს ფაილი შეიცავს პროექტის კონტექსტს AI აგენტებისთვის.  
-> **ინსტრუქცია აგენტს:** "წაიკითხე PROJECT_CONTEXT.md და შეასრულე NEXT_TASK სექციაში მითითებული დავალება"
-
----
-
-## 🎯 NEXT_TASK: LangGraph Implementation
-
-> [!IMPORTANT]  
-> **Claude Code-მა უნდა შეასრულოს ეს დავალება**
-
-### დავალება:
-შექმენი LangGraph არქიტექტურა Scoop AI-სთვის
-
-### ფაილები შესაქმნელად:
-```
-scoop-backend-original/
-├── graph/
-│   ├── __init__.py
-│   ├── state.py              # ScoopState TypedDict
-│   ├── builder.py            # StateGraph construction  
-│   └── nodes/
-│       ├── __init__.py
-│       ├── intent_classifier.py
-│       ├── product_search.py
-│       ├── profile_loader.py
-│       └── responder.py
-```
-
-### ნაბიჯები:
-1. `pip install langgraph langchain-google-genai`
-2. შექმენი `graph/state.py` - ScoopState definition
-3. შექმენი `graph/nodes/intent_classifier.py`  
-4. შექმენი `graph/nodes/product_search.py` - არსებული search_products ლოგიკა
-5. შექმენი `graph/nodes/profile_loader.py` - არსებული get_user_profile ლოგიკა
-6. შექმენი `graph/nodes/responder.py` - Gemini response
-7. შექმენი `graph/builder.py` - StateGraph
-8. შექმენი `/chat/v2` endpoint main.py-ში
-9. გატესტე და შეადარე latency `/chat/stream`-თან
-
-### არსებული ფაილები გასაანალიზებლად:
-- `main.py` - chat_stream endpoint (line ~1500)
-- `app/tools/user_tools.py` - search_products, get_user_profile
-- `prompts/system_prompt.py` - SYSTEM_PROMPT
+> 📋 პროექტის კონტექსტი AI აგენტებისთვის  
+> **Version:** 2.5.0 | **Last Updated:** 2026-01-17
 
 ---
 
-## 🏗️ აქტიური რეპოზიტორიები
+## 🏗️ რეპოზიტორიები
 
-| პროექტი | GitHub | Cloud Run URL |
-|---------|--------|---------------|
+| პროექტი | GitHub | Production URL |
+|---------|--------|----------------|
 | **Frontend** | [scoop-vercel-fresh](https://github.com/Maqashable-284/scoop-vercel-fresh) | https://scoop-vercel-358331686110.europe-west1.run.app |
 | **Backend** | [scoop-generative-ai-sdk-28-04](https://github.com/Maqashable-284/scoop-generative-ai-sdk-28-04) | https://scoop-ai-sdk-358331686110.europe-west1.run.app |
 
 ---
 
-## 📂 ლოკალური ფაილები
+## 📂 ფაილური სტრუქტურა
 
-### Backend:
 ```
-/Users/maqashable/Desktop/Claude/06-01-26/scoop-ai/scoop-backend-original/
-├── main.py                           # FastAPI server, chat_stream endpoint
-├── config.py                         # Settings, env vars
+src/
 ├── app/
-│   ├── tools/user_tools.py           # search_products, get_user_profile
-│   └── memory/mongo_store.py         # DatabaseManager, MongoDB
-└── prompts/system_prompt.py          # SYSTEM_PROMPT, AI personality
-```
-
-### Frontend:
-```
-/Users/maqashable/Desktop/Claude/06-01-26/scoop-ai/scoop-frontend-original/
-├── src/components/
-│   ├── Chat.tsx                      # Main chat, SSE streaming
-│   ├── chat-response.tsx             # Response renderer
-│   └── chat-loader.tsx               # ThinkingStepsLoader
-└── src/lib/
-    └── parseProducts.ts              # Markdown parser
+│   ├── page.tsx              # Main page entry
+│   └── globals.css           # 🎨 Global styles + stability classes
+├── components/
+│   ├── Chat.tsx              # 🔥 Main chat container (max-w-[1184px])
+│   ├── chat-response.tsx     # Message rendering (ai-response-grid)
+│   ├── thinking-steps-loader.tsx  # Loading state (ai-response-grid)
+│   ├── empty-screen.tsx      # Welcome screen + invisible spacer
+│   └── sidebar.tsx           # Gemini-style sidebar
+└── lib/
+    └── parseProducts.ts      # Markdown parser
 ```
 
 ---
@@ -84,34 +36,67 @@ scoop-backend-original/
 ## 🚀 ლოკალური გაშვება
 
 ```bash
-# Backend (port 8080)
-cd scoop-backend-original && python3 main.py
-
-# Frontend (port 3000)
-cd scoop-frontend-original && npm run dev
+cd scoop-frontend-original-github
+npm run dev     # http://localhost:3000
+npm run build   # Production build
 ```
 
 ---
 
-## ☁️ Cloud Run - ავტო-დეპლოი
+## ☁️ CI/CD
 
-GitHub `main` → Cloud Build → Cloud Run (ავტომატური)
-
-| რეპო | Service | Trigger |
-|------|---------|---------|
-| scoop-generative-ai-sdk-28-04 | scoop-ai-sdk | ✅ |
-| scoop-vercel-fresh | scoop-vercel | ✅ |
+```
+git push origin main → Cloud Build → Cloud Run (ავტომატური)
+```
 
 ---
 
-## 📅 სესიის ისტორია
+## 📅 Changelog
 
-### 2026-01-16:
-- ✅ Cloud Run cleanup (11 სერვისი წაშლილია)
-- ✅ CI/CD Setup (Cloud Build Triggers)
-- ✅ Thinking UI მუშაობს
-- ✅ PROJECT_CONTEXT.md შექმნილია
-- 🔄 LangGraph Implementation დაგეგმილია
+### v2.5.0 (2026-01-17) - Gemini-style Mobile Layout
+| ფაილი | ცვლილება |
+|-------|----------|
+| `Chat.tsx` | Emojis removed from pills, compact text, `flex-nowrap` |
+| `globals.css` | Single-line pills layout, `max-w-[768px]` |
+
+### v2.4.0 (2026-01-17) - Gemini-style Sidebar Redesign
+| ფაილი | ცვლილება |
+|-------|----------|
+| `sidebar.tsx` | PenLine icon, removed "ბოლო საუბრები" header, cursor-pointer |
+| `Chat.tsx` | Scrolling behavior fix, removed top border from quick replies |
+| `globals.css` | +564 lines Gemini-style UI classes |
+
+### v2.3.0 (2026-01-17) - Container Width Stability
+| ფაილი | ცვლილება |
+|-------|----------|
+| `Chat.tsx` | `w-full max-w-[1184px]` root container |
+| `globals.css` | +42 lines: `.ai-response-grid`, `.chat-scroll-container` |
+| `chat-response.tsx` | Added `ai-response-grid` class |
+| `thinking-steps-loader.tsx` | Added `ai-response-grid` class |
+| `empty-screen.tsx` | Invisible 32px spacer for layout consistency |
+| `parseProducts.ts` | Minor stability fixes |
+
+**პრობლემა:** EmptyScreen → ThinkingStepsLoader → ChatResponse გადასვლისას width იცვლებოდა (822px → 896px), "jump" ეფექტი.
+
+**გადაწყვეტა:** Fixed grid layout + consistent wrapper width.
+
+---
+
+## 🎨 CSS Stability Classes
+
+```css
+/* globals.css */
+.ai-response-grid {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  width: 100%;
+}
+
+.chat-scroll-container {
+  width: 100%;
+  max-width: 1184px;
+}
+```
 
 ---
 
@@ -123,10 +108,9 @@ GitHub `main` → Cloud Build → Cloud Run (ავტომატური)
 ├─────────────────────────────┬───────────────────────────────────┤
 │      scoop-vercel           │         scoop-ai-sdk              │
 │      (Frontend)             │          (Backend)                │
-│      Next.js                │      FastAPI + Gemini             │
+│      Next.js 16             │      FastAPI + Gemini 3 Flash     │
 │                             │                                   │
-│  NEXT_PUBLIC_BACKEND_URL ───┼──────► /chat/stream               │
-│                             │        /chat/v2 (LangGraph)       │
+│  NEXT_PUBLIC_BACKEND_URL ───┼──────► /chat/v2                   │
 │                             │        /health                    │
 └─────────────────────────────┴───────────────────────────────────┘
                                          │
@@ -139,20 +123,9 @@ GitHub `main` → Cloud Build → Cloud Run (ავტომატური)
 
 ---
 
-## 🎯 LangGraph Target Architecture
+## ⚠️ კრიტიკული წესები
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│                    LangGraph StateGraph                       │
-├──────────────┬───────────────┬───────────────┬───────────────┤
-│  START       │  intent_node  │  search_node  │  response_    │
-│     ○───────▶│   (Router)    │──▶ (MongoDB)  │──▶ node       │
-│              │               │               │       │       │
-│              │    ▼ allergy  │               │       ▼       │
-│              │  profile_node │               │     END       │
-└──────────────┴───────────────┴───────────────┴───────────────┘
-```
-
----
-
-**Last Updated:** 2026-01-16T16:46
+1. **არ შეცვალო** `max-w-[1184px]` - layout stability
+2. **არ წაშალო** `ai-response-grid` კლასები - prevents width jump
+3. **Tailwind Only** - no inline styles for core layout
+4. **Test locally** before push - `npm run build`
