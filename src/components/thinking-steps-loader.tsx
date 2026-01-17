@@ -64,9 +64,9 @@ export function ThinkingStepsLoader({ userMessage, onComplete }: ThinkingStepsLo
                 </div>
             )}
 
-            {/* AI Response Container - Using grid for stable width */}
-            <div className="grid items-start gap-3 w-full" style={{ gridTemplateColumns: 'auto 1fr' }}>
-                {/* Scoop Logo with pulse ring */}
+            {/* AI Response Container - Using stable grid class for consistent width */}
+            <div className="ai-response-grid">
+                {/* Scoop Logo with pulse ring - fixed 32px width */}
                 <div
                     className="relative w-8 h-8 rounded-xl border flex items-center justify-center flex-shrink-0 animate-pulse-ring"
                     style={{ backgroundColor: 'white', borderColor: '#E5E7EB' }}
@@ -74,12 +74,8 @@ export function ThinkingStepsLoader({ userMessage, onComplete }: ThinkingStepsLo
                     <ScoopLogo className="w-4 h-4" />
                 </div>
 
-                {/* Steps Container - No border, matches ChatResponse style */}
-                <div
-                    className="min-w-0 py-1"
-                    role="status"
-                    aria-live="polite"
-                >
+                {/* Steps Container - uses stable content class */}
+                <div className="ai-response-content py-1" role="status" aria-live="polite">
                     <div className="space-y-2">
                         {steps.map((step, index) => {
                             const status = getStepStatus(index);

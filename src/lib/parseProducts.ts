@@ -111,6 +111,10 @@ export function parseProductsFromMarkdown(markdown: string): ParsedResponse {
         markdown = markdown.replace(tipPattern, '').trim();
     }
 
+    // Remove [QUICK_REPLIES] tags (already provided separately via JSON)
+    const quickRepliesPattern = /\[QUICK_REPLIES\][\s\S]*?\[\/QUICK_REPLIES\]/g;
+    markdown = markdown.replace(quickRepliesPattern, '').trim();
+
     const lines = markdown.split('\n');
     const rawProducts: ParsedProduct[] = [];
     let intro = '';
