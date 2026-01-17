@@ -803,6 +803,11 @@ export default function Chat() {
                     <div className="gemini-centered-container bg-background">
                         <WelcomeSection />
 
+                        {/* Mobile-only Pills - welcome-ის ქვემოთ */}
+                        <div className="mobile-pills-wrapper flex lg:hidden">
+                            <QuickActionPills onSelect={(text) => sendMessageStream(text)} />
+                        </div>
+
                         {/* Centered Input */}
                         <div className="gemini-centered-input">
                             <form onSubmit={handleSubmit} className="flex items-center gap-2 p-3 rounded-xl border border-[#E5E7EB] bg-white transition-all duration-150 ease-in-out focus-within:border-[#0A7364] hover:border-[#0A7364]">
@@ -850,11 +855,13 @@ export default function Chat() {
                                 </button>
                             </form>
 
-                            {/* Quick Action Pills */}
-                            <QuickActionPills onSelect={(text) => sendMessageStream(text)} />
+                            {/* Desktop-only Pills - input-ის ქვემოთ */}
+                            <div className="hidden lg:block">
+                                <QuickActionPills onSelect={(text) => sendMessageStream(text)} />
+                            </div>
                         </div>
 
-                        <p className="text-center text-xs text-gray-400 mt-6">
+                        <p className="text-center text-xs text-gray-400 mt-6 disclaimer-text">
                             გაითვალისწინეთ, AI ასისტენტმა შეიძლება დაუშვას შეცდომა.
                         </p>
                     </div>
