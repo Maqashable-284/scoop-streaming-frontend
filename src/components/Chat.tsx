@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Settings, Send, Menu, AlertTriangle, Square, ArrowRight } from 'lucide-react';
-import { EmptyScreen } from './empty-screen';
+// EmptyScreen removed - replaced with Gemini-style WelcomeSection + QuickActionPills
 import { ThinkingStepsLoader } from './thinking-steps-loader';
 import { ChatResponse } from './chat-response';
 import { ScoopLogo } from './scoop-logo';
@@ -34,6 +34,45 @@ interface Conversation {
 
 // Generate unique ID
 const generateId = () => Math.random().toString(36).substring(2, 15);
+
+// Gemini-style Welcome Section (centered layout)
+function WelcomeSection() {
+    return (
+        <div className="gemini-welcome">
+            <div className="flex items-center justify-center gap-2 mb-3">
+                <ScoopLogo className="w-8 h-8" />
+            </div>
+            <h1 className="gemini-welcome-title">გამარჯობა!</h1>
+            <p className="gemini-welcome-subtitle">რით შემიძლია დაგეხმაროთ დღეს?</p>
+        </div>
+    );
+}
+
+// Gemini-style Quick Action Pills
+function QuickActionPills({ onSelect }: { onSelect: (text: string) => void }) {
+    const pills = [
+        { emoji: '🥤', text: 'პროტეინი მინდა' },
+        { emoji: '💪', text: 'კრეატინი' },
+        { emoji: '💊', text: 'ვიტამინები' },
+        { emoji: '❤️', text: 'ჯანმრთელობა' },
+        { emoji: '🔥', text: 'წონაში დაკლება' },
+    ];
+
+    return (
+        <div className="quick-pills-container">
+            {pills.map((pill) => (
+                <button
+                    key={pill.text}
+                    onClick={() => onSelect(pill.text)}
+                    className="quick-pill"
+                >
+                    <span>{pill.emoji}</span>
+                    <span>{pill.text}</span>
+                </button>
+            ))}
+        </div>
+    );
+}
 
 // Fallback Message Bubble (for older history or simple texts)
 function MessageBubble({ message }: { message: Message }) {
@@ -568,11 +607,8 @@ export default function Chat() {
         }
 
         if (!activeConversation || activeConversation.messages.length === 0) {
-            return (
-                <div className="chat-content-wrapper space-y-8">
-                    <EmptyScreen setInput={(text: string) => sendMessageStream(text)} />
-                </div>
-            );
+            // Return null - empty state is now handled by Gemini-style centered layout
+            return null;
         }
 
         const items = [];
@@ -744,79 +780,66 @@ export default function Chat() {
                     <span className="font-semibold text-primary">Scoop AI</span>
                 </div>
 
-                {/* Desktop Header - Lightweight Variant */}
-                <div className="hidden lg:flex px-6 py-3 items-center justify-between bg-white" style={{ borderBottom: '1px solid #E5E5E5' }}>
-                    <div className="flex items-center gap-2.5">
-                        <div className="flex items-center justify-center rounded-lg" style={{ width: '32px', height: '32px', backgroundColor: '#0A7364' }}>
-                            <ScoopLogo className="w-5 h-5 text-white" />
+                {/* Desktop Header - Only show when there are messages */}
+                {activeConversation && activeConversation.messages.length > 0 && (
+                    <div className="hidden lg:flex px-6 py-3 items-center justify-between bg-white" style={{ borderBottom: '1px solid #E5E5E5' }}>
+                        <div className="flex items-center gap-2.5">
+                            <div className="flex items-center justify-center rounded-lg" style={{ width: '32px', height: '32px', backgroundColor: '#0A7364' }}>
+                                <ScoopLogo className="w-5 h-5 text-white" />
+                            </div>
+                            <span className="font-semibold text-base" style={{ color: '#111827' }}>Scoop AI</span>
                         </div>
-                        <span className="font-semibold text-base" style={{ color: '#111827' }}>Scoop AI</span>
+                        <button
+                            className="p-2 rounded-lg transition-colors hover:bg-[#F3F4F6] group"
+                            style={{ width: '40px', height: '40px' }}
+                        >
+                            <Settings className="w-5 h-5 group-hover:text-[#374151]" style={{ color: '#6B7280' }} strokeWidth={1.5} />
+                        </button>
                     </div>
-                    <button
-                        className="p-2 rounded-lg transition-colors hover:bg-[#F3F4F6] group"
-                        style={{ width: '40px', height: '40px' }}
-                    >
-                        <Settings className="w-5 h-5 group-hover:text-[#374151]" style={{ color: '#6B7280' }} strokeWidth={1.5} />
-                    </button>
-                </div>
+                )}
 
-                {/* Chat content - uses stable scroll container class */}
-                <div className="flex-1 chat-scroll-container bg-background">
-                    {renderChatHistory()}
-                </div>
+                {/* Conditional Layout: Gemini-style centered vs Active chat */}
+                {(!activeConversation || activeConversation.messages.length === 0) ? (
+                    /* ===== EMPTY STATE: Gemini-style Centered Layout ===== */
+                    <div className="gemini-centered-container bg-background">
+                        <WelcomeSection />
 
-                {/* Input area - Pine Green style */}
-                <div className="border-t border-gray-100 bg-white">
-                    <div className="max-w-4xl mx-auto px-6 py-4">
-                        <form onSubmit={handleSubmit} className="flex items-center gap-2 p-3 rounded-xl border border-[#E5E7EB] bg-white transition-all duration-150 ease-in-out focus-within:border-[#0A7364] hover:border-[#0A7364]">
-                            <textarea
-                                value={input}
-                                onChange={(e) => {
-                                    setInput(e.target.value);
-                                    // Auto-resize: reset to min first, then grow
-                                    e.target.style.height = '44px';
-                                    e.target.style.height = Math.min(e.target.scrollHeight, 150) + 'px';
-                                }}
-                                onKeyDown={(e) => {
-                                    // Submit on Enter (without Shift)
-                                    if (e.key === 'Enter' && !e.shiftKey) {
-                                        e.preventDefault();
-                                        if (input.trim() && !isLoading) {
-                                            sendMessageStream(input);
+                        {/* Centered Input */}
+                        <div className="gemini-centered-input">
+                            <form onSubmit={handleSubmit} className="flex items-center gap-2 p-3 rounded-xl border border-[#E5E7EB] bg-white transition-all duration-150 ease-in-out focus-within:border-[#0A7364] hover:border-[#0A7364]">
+                                <textarea
+                                    value={input}
+                                    onChange={(e) => {
+                                        setInput(e.target.value);
+                                        e.target.style.height = '44px';
+                                        e.target.style.height = Math.min(e.target.scrollHeight, 150) + 'px';
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && !e.shiftKey) {
+                                            e.preventDefault();
+                                            if (input.trim() && !isLoading) {
+                                                sendMessageStream(input);
+                                            }
                                         }
-                                    }
-                                }}
-                                placeholder="დაწერე შენი კითხვა..."
-                                disabled={isLoading}
-                                rows={1}
-                                className="flex-1 min-w-0 bg-transparent text-gray-900 placeholder:text-gray-400 focus:outline-none disabled:opacity-50 resize-none overflow-y-auto"
-                                style={{
-                                    fontSize: '16px',
-                                    fontFamily: 'Noto Sans Georgian, sans-serif',
-                                    padding: '8px 12px',
-                                    minHeight: '44px',
-                                    maxHeight: '150px',
-                                    border: 'none',
-                                    lineHeight: '1.5'
-                                }}
-                            />
-                            {isLoading ? (
-                                <button
-                                    type="button"
-                                    onClick={() => window.location.reload()}
-                                    aria-label="შეჩერება"
-                                    tabIndex={0}
-                                    className="flex-shrink-0 flex items-center justify-center p-3 rounded-xl transition-all duration-150 ease-in-out hover:bg-[#FEF2F2] border border-transparent hover:border-[#FECACA]"
-                                    style={{ width: '48px', height: '48px' }}
-                                >
-                                    <Square style={{ width: '20px', height: '20px', color: '#CC3348', borderRadius: '2px' }} strokeWidth={0} fill="#CC3348" />
-                                </button>
-                            ) : (
+                                    }}
+                                    placeholder="დაწერე შენი კითხვა..."
+                                    disabled={isLoading}
+                                    rows={1}
+                                    className="flex-1 min-w-0 bg-transparent text-gray-900 placeholder:text-gray-400 focus:outline-none disabled:opacity-50 resize-none overflow-y-auto"
+                                    style={{
+                                        fontSize: '16px',
+                                        fontFamily: 'Noto Sans Georgian, sans-serif',
+                                        padding: '8px 12px',
+                                        minHeight: '44px',
+                                        maxHeight: '150px',
+                                        border: 'none',
+                                        lineHeight: '1.5'
+                                    }}
+                                />
                                 <button
                                     type="submit"
-                                    disabled={!input.trim()}
+                                    disabled={!input.trim() || isLoading}
                                     aria-label="გაგზავნა"
-                                    tabIndex={0}
                                     className="flex-shrink-0 flex items-center justify-center p-3 rounded-xl transition-all duration-150 ease-in-out disabled:opacity-30 hover:bg-[#085C50]"
                                     style={{
                                         width: '48px',
@@ -826,13 +849,90 @@ export default function Chat() {
                                 >
                                     <ArrowRight style={{ width: '24px', height: '24px', color: input.trim() ? '#FFFFFF' : '#9CA3AF' }} strokeWidth={2} />
                                 </button>
-                            )}
-                        </form>
-                        <p className="text-center text-xs text-gray-400 mt-3">
-                            გაითვალისწინეთ, AI ასისტენტმა შეიძლება დაუშვას შეცდომა. ჯანმრთელობის საკითხებზე გაიარეთ კონსულტაცია სპეციალისტთან.
+                            </form>
+
+                            {/* Quick Action Pills */}
+                            <QuickActionPills onSelect={(text) => sendMessageStream(text)} />
+                        </div>
+
+                        <p className="text-center text-xs text-gray-400 mt-6">
+                            გაითვალისწინეთ, AI ასისტენტმა შეიძლება დაუშვას შეცდომა.
                         </p>
                     </div>
-                </div>
+                ) : (
+                    /* ===== ACTIVE STATE: Messages + Bottom Input ===== */
+                    <>
+                        {/* Chat content - scrollable */}
+                        <div className="flex-1 chat-scroll-container bg-background">
+                            {renderChatHistory()}
+                        </div>
+
+                        {/* Input area - fixed at bottom */}
+                        <div className="border-t border-gray-100 bg-white">
+                            <div className="max-w-4xl mx-auto px-6 py-4">
+                                <form onSubmit={handleSubmit} className="flex items-center gap-2 p-3 rounded-xl border border-[#E5E7EB] bg-white transition-all duration-150 ease-in-out focus-within:border-[#0A7364] hover:border-[#0A7364]">
+                                    <textarea
+                                        value={input}
+                                        onChange={(e) => {
+                                            setInput(e.target.value);
+                                            e.target.style.height = '44px';
+                                            e.target.style.height = Math.min(e.target.scrollHeight, 150) + 'px';
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' && !e.shiftKey) {
+                                                e.preventDefault();
+                                                if (input.trim() && !isLoading) {
+                                                    sendMessageStream(input);
+                                                }
+                                            }
+                                        }}
+                                        placeholder="დაწერე შენი კითხვა..."
+                                        disabled={isLoading}
+                                        rows={1}
+                                        className="flex-1 min-w-0 bg-transparent text-gray-900 placeholder:text-gray-400 focus:outline-none disabled:opacity-50 resize-none overflow-y-auto"
+                                        style={{
+                                            fontSize: '16px',
+                                            fontFamily: 'Noto Sans Georgian, sans-serif',
+                                            padding: '8px 12px',
+                                            minHeight: '44px',
+                                            maxHeight: '150px',
+                                            border: 'none',
+                                            lineHeight: '1.5'
+                                        }}
+                                    />
+                                    {isLoading ? (
+                                        <button
+                                            type="button"
+                                            onClick={() => window.location.reload()}
+                                            aria-label="შეჩერება"
+                                            className="flex-shrink-0 flex items-center justify-center p-3 rounded-xl transition-all duration-150 ease-in-out hover:bg-[#FEF2F2] border border-transparent hover:border-[#FECACA]"
+                                            style={{ width: '48px', height: '48px' }}
+                                        >
+                                            <Square style={{ width: '20px', height: '20px', color: '#CC3348', borderRadius: '2px' }} strokeWidth={0} fill="#CC3348" />
+                                        </button>
+                                    ) : (
+                                        <button
+                                            type="submit"
+                                            disabled={!input.trim()}
+                                            aria-label="გაგზავნა"
+                                            className="flex-shrink-0 flex items-center justify-center p-3 rounded-xl transition-all duration-150 ease-in-out disabled:opacity-30 hover:bg-[#085C50]"
+                                            style={{
+                                                width: '48px',
+                                                height: '48px',
+                                                backgroundColor: input.trim() ? '#0A7364' : 'transparent'
+                                            }}
+                                        >
+                                            <ArrowRight style={{ width: '24px', height: '24px', color: input.trim() ? '#FFFFFF' : '#9CA3AF' }} strokeWidth={2} />
+                                        </button>
+                                    )}
+                                </form>
+                                <p className="text-center text-xs text-gray-400 mt-3">
+                                    გაითვალისწინეთ, AI ასისტენტმა შეიძლება დაუშვას შეცდომა. ჯანმრთელობის საკითხებზე გაიარეთ კონსულტაცია სპეციალისტთან.
+                                </p>
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );
