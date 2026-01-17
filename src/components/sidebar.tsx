@@ -304,7 +304,7 @@ export function Sidebar({
 
             <div
                 className={`
-                fixed inset-y-0 left-0 z-50 flex-shrink-0 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 w-full lg:w-72
+                fixed inset-y-0 left-0 z-50 flex-shrink-0 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 w-[85%] lg:w-72
                 ${isOpen ? 'translate-x-0' : '-translate-x-full'}
             `}
             >
