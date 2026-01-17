@@ -110,6 +110,14 @@ Description
 
 ## 📝 Changelog
 
+### v2.4.0 (Jan 17, 2026) - Gemini-Style Sidebar Redesign 🎨
+- ✨ **New Chat Button** - Gemini-inspired design with PenLine icon
+- ✨ **Cursor Pointer** - All interactive sidebar elements now show pointer cursor
+- 🔧 Removed 'ბოლო საუბრები' header from sidebar
+- 🔧 Hidden close (X) button on desktop (mobile only now)
+- 🔧 Fixed scrolling jump behavior in Chat.tsx
+- 🔧 Removed top border from quick replies container
+
 ### v2.3.0 (Jan 15, 2026) - AI Thinking Steps Loader ✨
 - ✨ **ThinkingStepsLoader** - New animated 5-step loader during AI processing
   - 📦 ვამოწმებ ხელმისაწვდომობას
