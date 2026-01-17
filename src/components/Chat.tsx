@@ -51,11 +51,11 @@ function WelcomeSection() {
 // Gemini-style Quick Action Pills
 function QuickActionPills({ onSelect }: { onSelect: (text: string) => void }) {
     const pills = [
-        { emoji: '🥤', text: 'პროტეინი მინდა' },
-        { emoji: '💪', text: 'კრეატინი' },
-        { emoji: '💊', text: 'ვიტამინები' },
-        { emoji: '❤️', text: 'ჯანმრთელობა' },
-        { emoji: '🔥', text: 'წონაში დაკლება' },
+        { text: 'პროტეინი' },
+        { text: 'კრეატინი' },
+        { text: 'ვიტამინები' },
+        { text: 'ჯანმრთელობა' },
+        { text: 'წონა' },
     ];
 
     return (
@@ -66,7 +66,6 @@ function QuickActionPills({ onSelect }: { onSelect: (text: string) => void }) {
                     onClick={() => onSelect(pill.text)}
                     className="quick-pill"
                 >
-                    <span>{pill.emoji}</span>
                     <span>{pill.text}</span>
                 </button>
             ))}
