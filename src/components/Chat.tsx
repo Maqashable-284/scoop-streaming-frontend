@@ -111,6 +111,7 @@ export default function Chat() {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+    const [thinkingSteps, setThinkingSteps] = useState<string[]>([]); // Real-time AI thoughts
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const activeConversation = conversations.find((c) => c.id === activeId);
@@ -374,6 +375,7 @@ export default function Chat() {
 
             setInput('');
             setIsLoading(true);
+            setThinkingSteps([]); // Reset thinking steps for new message
             // Reset textarea height
             const textarea = document.querySelector('textarea');
             if (textarea) textarea.style.height = '44px';
@@ -450,6 +452,7 @@ export default function Chat() {
 
                         try {
                             const data = JSON.parse(line.slice(6));
+                            console.log('[DEBUG SSE]', data.type, data.content?.slice?.(0, 50) || data.content);
 
                             if (data.type === 'text') {
                                 assistantContent += data.content;
@@ -501,6 +504,9 @@ export default function Chat() {
                                             : conv
                                     )
                                 );
+                            } else if (data.type === 'thinking') {
+                                // Real-time AI thoughts from Gemini Thinking Stream
+                                setThinkingSteps(prev => [...prev, data.content]);
                             } else if (data.type === 'quick_replies') {
                                 quickReplies = data.content.map((qr: { title: string; payload: string }) => ({
                                     title: qr.title,
@@ -653,7 +659,7 @@ export default function Chat() {
                 else if (isLoading && (i === msgs.length - 1 || (nextMsg && nextMsg.role === 'assistant' && !nextMsg.content?.trim()))) {
                     items.push(
                         <div key="loader" ref={lastUserMessageRef} className="w-full">
-                            <ThinkingStepsLoader userMessage={msg.content} />
+                            <ThinkingStepsLoader userMessage={msg.content} realThoughts={thinkingSteps} />
                         </div>
                     );
                     // Skip the empty assistant message if it exists

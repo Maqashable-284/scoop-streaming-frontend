@@ -7,6 +7,7 @@ import type { LucideIcon } from 'lucide-react';
 
 interface ThinkingStepsLoaderProps {
     userMessage: string;
+    realThoughts?: string[]; // Real-time AI thoughts from Gemini Thinking Stream
     onComplete?: () => void;
 }
 
@@ -24,9 +25,12 @@ const steps: Step[] = [
     { icon: Sparkles, text: "ვამზადებ რეკომენდაციას", duration: 2000 },
 ];
 
-export function ThinkingStepsLoader({ userMessage, onComplete }: ThinkingStepsLoaderProps) {
+export function ThinkingStepsLoader({ userMessage, realThoughts, onComplete }: ThinkingStepsLoaderProps) {
     const [currentStep, setCurrentStep] = useState(0);
     const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+
+    // Use real thoughts if available, otherwise use fake steps
+    const hasRealThoughts = realThoughts && realThoughts.length > 0;
 
     useEffect(() => {
         if (currentStep >= steps.length) {
@@ -77,71 +81,75 @@ export function ThinkingStepsLoader({ userMessage, onComplete }: ThinkingStepsLo
                 {/* Steps Container - uses stable content class */}
                 <div className="ai-response-content py-1" role="status" aria-live="polite">
                     <div className="space-y-2">
-                        {steps.map((step, index) => {
-                            const status = getStepStatus(index);
-                            const StepIcon = step.icon;
-
-                            return (
+                        {/* Render REAL thoughts if available */}
+                        {hasRealThoughts ? (
+                            realThoughts.map((thought, index) => (
                                 <div
                                     key={index}
-                                    className="flex items-center gap-3 h-7"
-                                    aria-label={`${step.text} - ${status === 'complete' ? 'დასრულებული' : status === 'active' ? 'მიმდინარე' : 'მოლოდინში'}`}
+                                    className="flex items-center gap-3 min-h-7"
+                                    aria-label={`აზრი ${index + 1}`}
                                 >
-                                    {/* Status Indicator */}
+                                    {/* Completed indicator */}
                                     <div
-                                        className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300"
-                                        style={{
-                                            backgroundColor: status === 'complete' ? '#0A7364' : status === 'active' ? '#0A7364' : '#E5E7EB',
-                                        }}
+                                        className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
+                                        style={{ backgroundColor: '#0A7364' }}
                                     >
-                                        {status === 'complete' && (
-                                            <Check className="w-2.5 h-2.5 text-white animate-check-pop" strokeWidth={3} />
-                                        )}
-                                        {status === 'active' && (
-                                            <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                                        )}
+                                        <Check className="w-2.5 h-2.5 text-white animate-check-pop" strokeWidth={3} />
                                     </div>
 
-                                    {/* Icon */}
-                                    <StepIcon
-                                        className="w-4 h-4 flex-shrink-0 transition-colors duration-300"
-                                        style={{
-                                            color: status === 'pending' ? '#9CA3AF' : '#0A7364',
-                                        }}
+                                    {/* Thought icon */}
+                                    <Sparkles
+                                        className="w-4 h-4 flex-shrink-0"
+                                        style={{ color: '#0A7364' }}
                                         strokeWidth={1.5}
                                     />
 
-                                    {/* Text */}
-                                    <span
-                                        className="text-[12px] font-medium transition-colors duration-300"
-                                        style={{
-                                            color: status === 'pending' ? '#9CA3AF' : status === 'active' ? '#111827' : '#6B7280',
-                                            textDecoration: status === 'complete' ? 'line-through' : 'none',
-                                        }}
-                                    >
-                                        {step.text}
+                                    {/* Thought text */}
+                                    <span className="text-[12px] font-medium" style={{ color: '#111827' }}>
+                                        {thought}
                                     </span>
-
-                                    {/* Bouncing dots for active step */}
-                                    {status === 'active' && (
-                                        <div className="flex gap-0.5 ml-1">
-                                            <span
-                                                className="w-1 h-1 rounded-full animate-thinking-bounce"
-                                                style={{ backgroundColor: '#0A7364', animationDelay: '0s' }}
-                                            />
-                                            <span
-                                                className="w-1 h-1 rounded-full animate-thinking-bounce"
-                                                style={{ backgroundColor: '#0A7364', animationDelay: '0.15s' }}
-                                            />
-                                            <span
-                                                className="w-1 h-1 rounded-full animate-thinking-bounce"
-                                                style={{ backgroundColor: '#0A7364', animationDelay: '0.3s' }}
-                                            />
-                                        </div>
-                                    )}
                                 </div>
-                            );
-                        })}
+                            ))
+                        ) : (
+                            /* Minimal waiting animation until real thoughts arrive */
+                            <div className="flex items-center gap-3 min-h-7">
+                                {/* Pulsing indicator */}
+                                <div
+                                    className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 animate-pulse"
+                                    style={{ backgroundColor: '#0A7364' }}
+                                >
+                                    <div className="w-1.5 h-1.5 rounded-full bg-white" />
+                                </div>
+
+                                {/* Sparkle icon */}
+                                <Sparkles
+                                    className="w-4 h-4 flex-shrink-0"
+                                    style={{ color: '#0A7364' }}
+                                    strokeWidth={1.5}
+                                />
+
+                                {/* Waiting text */}
+                                <span className="text-[12px] font-medium" style={{ color: '#6B7280' }}>
+                                    ვფიქრობ...
+                                </span>
+
+                                {/* Bouncing dots */}
+                                <div className="flex gap-0.5 ml-1">
+                                    <span
+                                        className="w-1 h-1 rounded-full animate-thinking-bounce"
+                                        style={{ backgroundColor: '#0A7364', animationDelay: '0s' }}
+                                    />
+                                    <span
+                                        className="w-1 h-1 rounded-full animate-thinking-bounce"
+                                        style={{ backgroundColor: '#0A7364', animationDelay: '0.15s' }}
+                                    />
+                                    <span
+                                        className="w-1 h-1 rounded-full animate-thinking-bounce"
+                                        style={{ backgroundColor: '#0A7364', animationDelay: '0.3s' }}
+                                    />
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Progress Bar */}
