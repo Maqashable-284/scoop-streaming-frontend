@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Package, Search, FileText, Calculator, Sparkles, Check } from 'lucide-react';
+import { Package, Search, FileText, Calculator, Check } from 'lucide-react';
 import { ScoopLogo } from './scoop-logo';
 import type { LucideIcon } from 'lucide-react';
 
@@ -22,8 +22,16 @@ const steps: Step[] = [
     { icon: Search, text: "ვეძებ შესაბამის პროდუქტებს", duration: 2500 },
     { icon: FileText, text: "ვადარებ მახასიათებლებს", duration: 2000 },
     { icon: Calculator, text: "ვითვლი საუკეთესო ფასს", duration: 1500 },
-    { icon: Sparkles, text: "ვამზადებ რეკომენდაციას", duration: 2000 },
+    { icon: Calculator, text: "ვამზადებ რეკომენდაციას", duration: 2000 },
 ];
+
+// Extract only the **bold** text from thinking steps
+const extractBoldText = (text: string): string => {
+    const match = text.match(/\*\*(.+?)\*\*/);
+    if (match) return match[1];
+    // Fallback: if no bold, take first 60 chars
+    return text.length > 60 ? text.substring(0, 60) + '...' : text;
+};
 
 export function ThinkingStepsLoader({ userMessage, realThoughts, onComplete }: ThinkingStepsLoaderProps) {
     const [currentStep, setCurrentStep] = useState(0);
@@ -97,16 +105,9 @@ export function ThinkingStepsLoader({ userMessage, realThoughts, onComplete }: T
                                         <Check className="w-2.5 h-2.5 text-white animate-check-pop" strokeWidth={3} />
                                     </div>
 
-                                    {/* Thought icon */}
-                                    <Sparkles
-                                        className="w-4 h-4 flex-shrink-0"
-                                        style={{ color: '#0A7364' }}
-                                        strokeWidth={1.5}
-                                    />
-
-                                    {/* Thought text */}
+                                    {/* Thought text - extracted bold only */}
                                     <span className="text-[12px] font-medium" style={{ color: '#111827' }}>
-                                        {thought}
+                                        {extractBoldText(thought)}
                                     </span>
                                 </div>
                             ))
@@ -121,12 +122,7 @@ export function ThinkingStepsLoader({ userMessage, realThoughts, onComplete }: T
                                     <div className="w-1.5 h-1.5 rounded-full bg-white" />
                                 </div>
 
-                                {/* Sparkle icon */}
-                                <Sparkles
-                                    className="w-4 h-4 flex-shrink-0"
-                                    style={{ color: '#0A7364' }}
-                                    strokeWidth={1.5}
-                                />
+
 
                                 {/* Waiting text */}
                                 <span className="text-[12px] font-medium" style={{ color: '#6B7280' }}>
